@@ -30,7 +30,7 @@ namespace Dateien_Sortierprogramm.ViewModel
                 return;
             }
 
-            //Erstelle neue Liste mit allen PDF Dateinamen in Input Folder
+            //Erstelle neue Liste mit allen PDF Dateinamen in Input Folder!
             //Auch andere Dateien einbinden wie excel oder Txt oder vlt auch Word oder Open Office dateien
             foreach (SortingData sourceFolder in xmlData.SourceFolder)
             {

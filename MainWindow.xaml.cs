@@ -106,6 +106,7 @@ namespace Dateien_Sortierprogramm
 
         private void btn_Start_Click(object sender, RoutedEventArgs e)
         {
+           
             //TODO: prüfen, dass mindestens ein Source Ordner vorhanden ist und mindesten ein Suchpaar.
             if (!ViewModel.Validation.PathValidation(xmlDataCollector))
                 return;
