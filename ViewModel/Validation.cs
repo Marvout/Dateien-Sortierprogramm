@@ -13,7 +13,7 @@ using System.Xml.Linq;
 
 namespace Dateien_Sortierprogramm.ViewModel
 {
-    public class Validation
+    public class Validation //was soll hier passieren ?
     {
         public static bool PathValidation(string pathstring)
         {
