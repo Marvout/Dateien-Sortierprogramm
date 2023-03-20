@@ -66,13 +66,13 @@ namespace Dateien_Sortierprogramm
 
         private void btn_Save_Click(object sender, RoutedEventArgs e)
         {
-           
+
             if (!String.IsNullOrEmpty(txt_FolderForTaxStructure.Text) && chb_isTaxfolderStructreDesired.IsChecked == true)
             {
                 xmlDataCollector.OrdnerFuerSteuerstruktur = txt_FolderForTaxStructure.Text;
                 xmlDataCollector.isOrdnerFuerSteuerstruktur = true;
             }
-            
+
             XMLSerializer.CreateXMLFile(xmlDataCollector);
         }
 
@@ -87,13 +87,13 @@ namespace Dateien_Sortierprogramm
                 dg_SourceFolders.ItemsSource = xmlDataCollector.SourceFolder;
                 dg_Sorting.ItemsSource = null;
                 dg_Sorting.ItemsSource = xmlDataCollector.ExecuteList;
-                if(xmlDataCollector.isOrdnerFuerSteuerstruktur == true)
+                if (xmlDataCollector.isOrdnerFuerSteuerstruktur == true)
                 {
                     chb_isTaxfolderStructreDesired.IsChecked = true;
                     txt_FolderForTaxStructure.Text = xmlDataCollector.OrdnerFuerSteuerstruktur;
-                    chb_isTaxfolderStructreDesired_Click(sender,e);
+                    chb_isTaxfolderStructreDesired_Click(sender, e);
                 }
-               else if (xmlDataCollector.isOrdnerFuerSteuerstruktur == false)
+                else if (xmlDataCollector.isOrdnerFuerSteuerstruktur == false)
                 {
                     chb_isTaxfolderStructreDesired.IsChecked = false;
                     chb_isTaxfolderStructreDesired_Click(sender, e);
@@ -106,8 +106,12 @@ namespace Dateien_Sortierprogramm
 
         private void btn_Start_Click(object sender, RoutedEventArgs e)
         {
-           
-            //TODO: prüfen, dass mindestens ein Source Ordner vorhanden ist und mindesten ein Suchpaar.
+
+            if (xmlDataCollector == null)
+            {
+                MessageBox.Show("Bitte zuerst eine Datei laden oder mindestens einen Quellordner und ein Suchwort mit Zielordner anlegen.");
+                return;
+            }
             if (!ViewModel.Validation.PathValidation(xmlDataCollector))
                 return;
 

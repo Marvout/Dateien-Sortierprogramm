@@ -182,8 +182,28 @@ namespace Dateien_Sortierprogramm.ViewModel
                 }
             }
 
-            //Wenn eine Datei mit einer (1) nicht gelöscht werden soll wird sie trotzdem in der Liste hier gelöscht und somit nicht mehr sortiert
+            //FIX: Wenn eine Datei mit einer (1) nicht gelöscht werden soll wird sie trotzdem in der Liste hier gelöscht und somit nicht mehr sortiert
             listToClean.RemoveAll(item => item.Contains(searchString));
+        }
+
+        private static void ChangeAllYearRelevantDirectionsToCurrentYear(XMLData xmlData)
+        {
+            string _currentYear = Convert.ToString(DateTime.Now.Year);
+            string _previousYear = Convert.ToString(DateTime.Now.Year-1);
+            
+            foreach (SortingData sortingData in xmlData.ExecuteList)
+            {
+                if(sortingData.Zielordner.Contains(_previousYear))
+                {
+                    MessageBoxResult _messageBoxResult = MessageBox.Show("Soll der Zielordnerpfad: " + sortingData.Zielordner + " , " +
+                        "in dem das vorherige Jahr " + _previousYear + " Bestandteil" +
+                        "des Pfades ist, geändert werden auf das aktuelle Jahr: " + _currentYear + " ?", "Prüfen", MessageBoxButton.YesNo);
+                    if(_messageBoxResult == MessageBoxResult.Yes)
+                    {
+                        //TODO: Code für ersetzen von vorherigen Jahreszahl durch neue
+                    }
+                }
+            }
         }
     }
 }
