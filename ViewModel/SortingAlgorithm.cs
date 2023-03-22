@@ -189,6 +189,8 @@ namespace Dateien_Sortierprogramm.ViewModel
             
             for (int i = 0; i < xmlData.ExecuteList.Count; i++)
             {
+                //TODO: Noch einbauen, dass wenn Ordner nicht aktualisiert werden soll, dass dieser nicht bei jedem
+                //Laden erneut abgefragt wird. 
                 if (xmlData.ExecuteList[i].Zielordner.Contains(_previousYear))
                 {
                     MessageBoxResult _messageBoxResult = MessageBox.Show("Soll der Zielordnerpfad: \n" + xmlData.ExecuteList[i].Zielordner + "   , " +
