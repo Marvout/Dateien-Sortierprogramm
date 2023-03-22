@@ -59,6 +59,7 @@ namespace Dateien_Sortierprogramm
                 //Hinzufügen zu XMLData Objekt
                 //xmlDataCollector.SourceFolder.Add(txt_sourceFolder.Text);
                 xmlDataCollector.ExecuteList.Add(filecontent);
+                //Refresh DataGrid Sorting
                 dg_Sorting.ItemsSource = null;
                 dg_Sorting.ItemsSource = xmlDataCollector.ExecuteList;
             }
@@ -83,10 +84,7 @@ namespace Dateien_Sortierprogramm
             xmlDataCollector = XMLSerializer.LoadXMLFile();
             if (xmlDataCollector != null)
             {
-                dg_SourceFolders.ItemsSource = null;
-                dg_SourceFolders.ItemsSource = xmlDataCollector.SourceFolder;
-                dg_Sorting.ItemsSource = null;
-                dg_Sorting.ItemsSource = xmlDataCollector.ExecuteList;
+
                 if (xmlDataCollector.isOrdnerFuerSteuerstruktur == true)
                 {
                     chb_isTaxfolderStructreDesired.IsChecked = true;
@@ -102,6 +100,16 @@ namespace Dateien_Sortierprogramm
             }
             else
                 MessageBox.Show("Datei enthält keine Daten oder falsche Datei wurde ausgewählt.");
+
+            //Prüfen ob Zielordnerpfade mit Jahresangabe für neues Jahr geupdated sollen, grade beim Steuerordner
+            xmlDataCollector = SortingAlgorithm.ChangeAllYearRelevantDirectionsToCurrentYear(xmlDataCollector);
+
+            //Refresh DataGrid SourceFolders
+            dg_SourceFolders.ItemsSource = null;
+            dg_SourceFolders.ItemsSource = xmlDataCollector.SourceFolder;
+            //Refresh DataGrid Sorting
+            dg_Sorting.ItemsSource = null;
+            dg_Sorting.ItemsSource = xmlDataCollector.ExecuteList;
         }
 
         private void btn_Start_Click(object sender, RoutedEventArgs e)

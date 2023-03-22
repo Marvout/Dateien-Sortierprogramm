@@ -8,7 +8,7 @@ namespace Dateien_Sortierprogramm.Model
 {
     public class SortingData
     {
-        //TODO: Mach nur eine Model Datei und dann im ViewModel Listen aus Dingen die mehrfach erstellt werden
+        //Optional: Mach nur eine Model Datei und dann im ViewModel Listen aus Dingen die mehrfach erstellt werden
         public string Quellordner { get; set; } = "";
         public string Suchwort { get; set; } = "";
         public string Zielordner { get; set; } = "";

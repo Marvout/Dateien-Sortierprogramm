@@ -102,8 +102,8 @@ namespace Dateien_Sortierprogramm.ViewModel
         }
         private static void CreateTaxFolderStructure(XMLData xmlData)
         {
-            //TODO: Dateien soll anhand von Jahreszahl im Dateinamen einsortiert werden
             //TODO: Ganze Ordnerstruktur anlegbar machen und nicht hardcoden
+            //TODO: Dateinamen, die kein Datum vorangestellt haben, sollten eins bekommen, dafür soll das Datum gewählt werden, welche die Datei erstellt wurde
             //IDEE: Idee, dass nur Sonderkosten, Einkommen und Werbungskosten als Ordner da sind, und nur die Dateien dann sagen was genau es ist
             //OPTIONAL: Am Ende des Jahres alles automatisch mit PDF24 API oder so als eine PDF pro Kategorie zusammenfassen
 
@@ -175,35 +175,34 @@ namespace Dateien_Sortierprogramm.ViewModel
                     else if (dialogResult == MessageBoxResult.No)
                     {
                         MessageBox.Show("Bitte Datei umbenenen, damit die Datei einsortiert werden kann. Dann den Startvorgang bitte wiederholen.");
-                        //TODO: Hier noch Code schreiben, der dafür sorgt, dass Datei umbenannt wird oder so, sodass sie dann für den
-                        //Sortiervorgang berücksichtigt wird
-                        // File.Move(file, targetpath + filenameshort.Name);
                     }
                 }
             }
 
-            //FIX: Wenn eine Datei mit einer (1) nicht gelöscht werden soll wird sie trotzdem in der Liste hier gelöscht und somit nicht mehr sortiert
             listToClean.RemoveAll(item => item.Contains(searchString));
         }
 
-        private static void ChangeAllYearRelevantDirectionsToCurrentYear(XMLData xmlData)
+        public static XMLData ChangeAllYearRelevantDirectionsToCurrentYear(XMLData xmlData)
         {
             string _currentYear = Convert.ToString(DateTime.Now.Year);
             string _previousYear = Convert.ToString(DateTime.Now.Year-1);
             
-            foreach (SortingData sortingData in xmlData.ExecuteList)
+            for (int i = 0; i < xmlData.ExecuteList.Count; i++)
             {
-                if(sortingData.Zielordner.Contains(_previousYear))
+                if (xmlData.ExecuteList[i].Zielordner.Contains(_previousYear))
                 {
-                    MessageBoxResult _messageBoxResult = MessageBox.Show("Soll der Zielordnerpfad: " + sortingData.Zielordner + " , " +
-                        "in dem das vorherige Jahr " + _previousYear + " Bestandteil" +
-                        "des Pfades ist, geändert werden auf das aktuelle Jahr: " + _currentYear + " ?", "Prüfen", MessageBoxButton.YesNo);
-                    if(_messageBoxResult == MessageBoxResult.Yes)
+                    MessageBoxResult _messageBoxResult = MessageBox.Show("Soll der Zielordnerpfad: \n" + xmlData.ExecuteList[i].Zielordner + "   , " +
+                        "\nin dem das vorherige Jahr " + _previousYear + " Bestandteil" +
+                        " des Pfades ist, geändert werden auf das aktuelle Jahr " + _currentYear + " ?", "Prüfen", MessageBoxButton.YesNo);
+
+                    if (_messageBoxResult == MessageBoxResult.Yes)
                     {
-                        //TODO: Code für ersetzen von vorherigen Jahreszahl durch neue
+                        string newpathstring = xmlData.ExecuteList[i].Zielordner.Replace(_previousYear, _currentYear);
+                        xmlData.ExecuteList[i].Zielordner = newpathstring;
                     }
                 }
             }
+            return xmlData;
         }
     }
 }
