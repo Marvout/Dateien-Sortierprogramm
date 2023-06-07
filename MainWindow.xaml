@@ -4,12 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dateien_Sortierprogramm"
-        xmlns:vm="clr-namespace:Dateien_Sortierprogramm.ViewModel"
+        xmlns:vm="clr-namespace:Dateien_Sortierprogramm.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="800">
-    <!--<Window.DataContext>
-        <vm:MainPageViewModel/>
-    </Window.DataContext>-->
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
 
     <Window.Resources>
         <Style TargetType="TextBox">
@@ -33,34 +33,44 @@
         <Label x:Name="lbl_SourceFolder" Grid.Row="0" Grid.Column="2"  VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="100" Content="Quellordner" Margin="10,5,0,0"/>
         <Label x:Name="lbl_TargetFolder" Grid.Row="1" Grid.Column ="1"  VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="100" Content="Zielordner" Margin="10,35,0,0"/>
         <Label x:Name="lbl_Searchterm" Grid.Row="1" Grid.Column="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="100" Content="Suchwort" Margin="10,35,0,0"/>
-        <Label x:Name="lbl_TaxFolderStructure"  Grid.Row="2" Grid.Column="1" Margin="10,5"  VerticalAlignment="Top"  Height="30" Width="240" Content="Ordnerpfad in der Struktur angelegt wird:" />
 
         <!--TextBoxes-->
-        <TextBox x:Name="txt_Keyword"  Margin="10,70,10,10" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top"   Text="{Binding Suchwort, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox x:Name="txt_Keyword"  Margin="10,70,10,10" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" />
         <TextBox x:Name="txt_TargetFolder" Width="200" Margin="10,70,50,10" Grid.Row="1" Grid.Column="1"  VerticalAlignment="Top"        />
-        <TextBox x:Name="txt_FolderForTaxStructure"  Grid.Row="2" Grid.Column="2" VerticalAlignment="Top" Width="200" Margin="10,10,50,10"/>
 
         <!--Buttons-->
-        <Button x:Name="btn_Add" VerticalAlignment="Top" Margin="10,70,10,10" Height="30" Grid.Row="1" Grid.Column="2"   Click="btn_Add_Click"       Content="Hinzufügen"     />
-        <Button x:Name="btn_Add_Sources" VerticalAlignment="Top" Margin="10,35,10,0" Height="30" Grid.Row="0" Grid.Column="2"   Click="btn_Add_Sources_Click"  Command="{Binding AddSourceFolderCommand}"    Content="Hinzufügen"     />
-        <Button x:Name="btn_Save" Margin="10"  Height="30" Grid.Row="2" Grid.Column="0"  Click="btn_Save_Click"      Content="Speichern"      />
-        <Button x:Name ="btn_Load" Margin="10"  Height="30" Grid.Row="2" Grid.Column="1"  Click="btn_Load_Click"      Content="Laden"          />
-        <Button x:Name ="btn_Start" Margin="10"  Height="30" Grid.Row="2" Grid.Column="2"  Click="btn_Start_Click"    Content="Starten"       />
-        <Button x:Name="btn_AddTargetFolder" VerticalAlignment ="Top" Margin="214,72,2,0" Height="20" Width="30" Grid.Row="1" Grid.Column="1" Click="btn_AddTargetFolder_Click" Content="..."/>
-        <Button x:Name="btn_AddTaxStructreFolder"  VerticalAlignment ="Top" Margin="10,12,-200,0" Height="20" Width="30" Grid.Row="2" Grid.Column="2" Click="btn_AddTaxStructreFolder_Click" Content="..."/>
+        <Button x:Name="btn_Add_Sources" VerticalAlignment="Top" Margin="10,35,10,0" Height="30" Grid.Row="0" Grid.Column="2"  Content="Hinzufügen" Command="{Binding AddSource}"     />
 
-        <!--CheckBoxes-->
-        <CheckBox x:Name="chb_isTaxfolderStructreDesired" Height="30" VerticalAlignment="Top" Content="Steuerordnerstruktur angelegen?" Margin="10" Grid.Row="2" Click="chb_isTaxfolderStructreDesired_Click"   />
-        <!--DataGrid-->
-        <DataGrid x:Name="dg_Sorting"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="10,149,10,0" AutoGenerateColumns="False" CanUserAddRows="False">
+        <Button x:Name="btn_AddTargetFolder" VerticalAlignment ="Top" Margin="214,72,2,0" Height="20" Width="30" Grid.Row="1" Grid.Column="1" />
+        <Button x:Name="btn_Add" VerticalAlignment="Top" Margin="10,70,10,10" Height="30" Grid.Row="1" Grid.Column="2"  Content="Hinzufügen"     />
+
+        <Button x:Name ="btn_Load" Margin="10"  Height="30" Grid.Row="2" Grid.Column="0"  Content="Laden"          />
+        <Button x:Name="btn_Save" Margin="10"  Height="30" Grid.Row="2" Grid.Column="1"    Content="Speichern"      />
+        <Button x:Name ="btn_Start" Margin="10"  Height="30" Grid.Row="2" Grid.Column="2"  Content="Sortiervorgang starten"       />
+
+        <!--DataGrid oben: Ordner in denen gesucht werden soll-->
+        <DataGrid 
+            x:Name="dg_SourceFolders" 
+            Grid.Column="0" 
+            Grid.ColumnSpan="2" 
+            Margin="10" 
+            ItemsSource="{Binding ocSourceFolders}"
+            AutoGenerateColumns="False" 
+            CanUserAddRows="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Suchwort}" Header="Suchwort" Width="*" />
-                <DataGridTextColumn Header="Zielordner" Binding="{Binding Zielordner}" Width="2*"/>
+                <DataGridTextColumn x:Name="dataGridTextColumn" 
+                    Header="Ordner in denen nach Dateien gesucht werden soll"  
+                    Width="*"
+                    Binding="{Binding}"
+                    />
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid x:Name="dg_SourceFolders" Grid.Column="0" Grid.ColumnSpan="2" Margin="10" AutoGenerateColumns="False" CanUserAddRows="False">
+
+        <!--DataGrid Mitte: Suchdefinition-->
+        <DataGrid x:Name="dg_Sorting"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="10,149,10,0" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Quellordner" Binding ="{Binding Quellordner}" Width="*"/>
+                <DataGridTextColumn  Header="Suchwort" Width="*" />
+                <DataGridTextColumn Header="Zielordner" Width="2*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
