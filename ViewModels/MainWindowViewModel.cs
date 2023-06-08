@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using WPFBasics;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 
 
@@ -34,33 +35,26 @@ namespace Dateien_Sortierprogramm.ViewModels
             this.TestHelloCommand = new DelegateCommand((o) =>
             {
                 TestHelloMessageBox();
-                //MessageBox.Show("Hello World");
-               
+
             });
         }
 
 
         public void TestHelloMessageBox()
         {
-            MessageBox.Show("Hello World");
-            OpenFileDialog dialog = new OpenFileDialog()
+            var dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;
+            CommonFileDialogResult result = dialog.ShowDialog();
+            if (result == CommonFileDialogResult.Ok)
             {
-                Title = "Ordner auswählen",
-                ValidateNames = false,
-                CheckFileExists = false,
-                CheckPathExists = true,
-                FileName = "Ordner auswählen",
-                Filter = "Ordner |*."
-            };
+                string selectedPath = dialog.FileName;
+                if (!string.IsNullOrEmpty(selectedPath))
+                {
+                    SourceFolders.Add(new Folder() { FolderPath = selectedPath });
+                }
 
-            if (dialog.ShowDialog() == true)
-            {
-                string selectedPath = Path.GetDirectoryName(dialog.FileName);
-
-                // Fügen Sie den ausgewählten Pfad zur SourceFolders-Liste hinzu
-                SourceFolders.Add(new Folder() {FolderPath = selectedPath });
             }
         }
-        
+
     }
 }

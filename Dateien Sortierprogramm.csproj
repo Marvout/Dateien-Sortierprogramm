@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="WindowsAPICodePackShell" Version="7.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WPF Basics\WPF Basics.csproj" />
   </ItemGroup>
 
