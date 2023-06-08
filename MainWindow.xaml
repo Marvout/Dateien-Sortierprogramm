@@ -30,7 +30,6 @@
         </Grid.RowDefinitions>
 
         <!--Labels-->
-        <Label x:Name="lbl_SourceFolder" Grid.Row="0" Grid.Column="2"  VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="100" Content="Quellordner" Margin="10,5,0,0"/>
         <Label x:Name="lbl_TargetFolder" Grid.Row="1" Grid.Column ="1"  VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="100" Content="Zielordner" Margin="10,35,0,0"/>
         <Label x:Name="lbl_Searchterm" Grid.Row="1" Grid.Column="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="100" Content="Suchwort" Margin="10,35,0,0"/>
 
@@ -39,30 +38,27 @@
         <TextBox x:Name="txt_TargetFolder" Width="200" Margin="10,70,50,10" Grid.Row="1" Grid.Column="1"  VerticalAlignment="Top"        />
 
         <!--Buttons-->
-        <Button x:Name="btn_Add_Sources" VerticalAlignment="Top" Margin="10,35,10,0" Height="30" Grid.Row="0" Grid.Column="2"  Content="Hinzufügen" Command="{Binding AddSource}"     />
 
         <Button x:Name="btn_AddTargetFolder" VerticalAlignment ="Top" Margin="214,72,2,0" Height="20" Width="30" Grid.Row="1" Grid.Column="1" />
-        <Button x:Name="btn_Add" VerticalAlignment="Top" Margin="10,70,10,10" Height="30" Grid.Row="1" Grid.Column="2"  Content="Hinzufügen"     />
+        <Button x:Name="btn_Add" Command="{Binding TestHelloCommand}" VerticalAlignment="Top" Margin="10,70,10,10" Height="30" Grid.Row="1" Grid.Column="2"  Content="Hinzufügen"     />
 
         <Button x:Name ="btn_Load" Margin="10"  Height="30" Grid.Row="2" Grid.Column="0"  Content="Laden"          />
         <Button x:Name="btn_Save" Margin="10"  Height="30" Grid.Row="2" Grid.Column="1"    Content="Speichern"      />
         <Button x:Name ="btn_Start" Margin="10"  Height="30" Grid.Row="2" Grid.Column="2"  Content="Sortiervorgang starten"       />
 
         <!--DataGrid oben: Ordner in denen gesucht werden soll-->
-        <DataGrid 
-            x:Name="dg_SourceFolders" 
-            Grid.Column="0" 
-            Grid.ColumnSpan="2" 
-            Margin="10" 
-            ItemsSource="{Binding ocSourceFolders}"
-            AutoGenerateColumns="False" 
-            CanUserAddRows="True">
+        <DataGrid Margin="5" Grid.ColumnSpan="2" x:Name="dgSourceFolders" CanUserAddRows="True" ItemsSource="{Binding SourceFolders}" AutoGenerateColumns="False" >
             <DataGrid.Columns>
-                <DataGridTextColumn x:Name="dataGridTextColumn" 
-                    Header="Ordner in denen nach Dateien gesucht werden soll"  
-                    Width="*"
-                    Binding="{Binding}"
-                    />
+                <DataGridTemplateColumn Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel  Orientation="Horizontal">
+                                <Button x:Name="btn_AddNewSource" DataContext="{Binding DataContext,RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Command="{Binding TestHelloCommand}"  Content="+ Ordnerpfad hinzufügen" />
+                                <TextBlock Text="{Binding FolderPath}" Margin="100,0,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
