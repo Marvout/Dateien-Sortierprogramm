@@ -23,8 +23,11 @@ namespace Dateien_Sortierprogramm.ViewModels
     public class MainWindowViewModel : NotifyableBaseObject
     {
         public ObservableCollection<Folder> SourceFolders { get; set; } = new ObservableCollection<Folder>();
-        public ICommand AddSourceFolderCommand { get; set; }
-        public ICommand TestHelloCommand { get; set; }
+        public ObservableCollection<OrderElement> OrderElements { get; set; } = new ObservableCollection<OrderElement>();
+        public ICommand SelectSourceFolderCommand { get; set; }
+        public ICommand SelectTargetFolderCommand { get; set; }
+
+        public Visibility IsVisible { get; set; } = Visibility.Visible;
         public MainWindowViewModel()
         {
             //DummyFolderPathService service = new DummyFolderPathService();
@@ -32,15 +35,19 @@ namespace Dateien_Sortierprogramm.ViewModels
             //{
             //    SourceFolders.Add(folderpath);
             //}
-            this.TestHelloCommand = new DelegateCommand((o) =>
+            this.SelectSourceFolderCommand = new DelegateCommand((o) =>
             {
-                TestHelloMessageBox();
+                SelectSourceFolder();
 
+            });
+            this.SelectTargetFolderCommand = new DelegateCommand((o) =>
+            {
+                SelectTargetFolder();
             });
         }
 
 
-        public void TestHelloMessageBox()
+        public void SelectSourceFolder()
         {
             var dialog = new CommonOpenFileDialog();
             dialog.IsFolderPicker = true;
@@ -50,11 +57,31 @@ namespace Dateien_Sortierprogramm.ViewModels
                 string selectedPath = dialog.FileName;
                 if (!string.IsNullOrEmpty(selectedPath))
                 {
-                    SourceFolders.Add(new Folder() { FolderPath = selectedPath });
+                    SourceFolders.Add(new Folder() { FolderPath = selectedPath + "\\" });
+                    this.IsVisible = Visibility.Collapsed;
                 }
 
             }
         }
+
+        public void SelectTargetFolder()
+        {
+            var dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;
+            CommonFileDialogResult result = dialog.ShowDialog();
+            if (result == CommonFileDialogResult.Ok)
+            {
+                string selectedPath = dialog.FileName;
+                if (!string.IsNullOrEmpty(selectedPath))
+                {
+                    OrderElements.Add(new OrderElement() {SearchTerm="", TargetFolderPath = selectedPath + "\\" });
+                    this.IsVisible = Visibility.Collapsed;
+                }
+
+            }
+        }
+
+
 
     }
 }
