@@ -14,8 +14,7 @@ using System.Windows.Input;
 using System.Windows.Navigation;
 using WPFBasics;
 using Microsoft.WindowsAPICodePack.Dialogs;
-
-
+using System.Diagnostics;
 
 namespace Dateien_Sortierprogramm.ViewModels
 {
@@ -26,6 +25,7 @@ namespace Dateien_Sortierprogramm.ViewModels
         public ObservableCollection<OrderElement> OrderElements { get; set; } = new ObservableCollection<OrderElement>();
         public ICommand SelectSourceFolderCommand { get; set; }
         public ICommand SelectTargetFolderCommand { get; set; }
+        public ICommand CreateOrderElementCommand { get; set; }
 
         public Visibility IsVisible { get; set; } = Visibility.Visible;
         public MainWindowViewModel()
@@ -44,6 +44,40 @@ namespace Dateien_Sortierprogramm.ViewModels
             {
                 SelectTargetFolder();
             });
+
+            this.CreateOrderElementCommand = new DelegateCommand((o) =>
+            {
+                AddingOrderElementsToGrid();
+            });
+        }
+
+
+        private string _searchTermUI;
+        public string SearchTermUI
+        {
+            get => _searchTermUI;
+            set
+            {
+                if (_searchTermUI != value)
+                {
+                    _searchTermUI = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private string _targetFolderUI;
+        public string TargetFolderUI
+        {
+            get => _targetFolderUI;
+            set
+            {
+                if (_targetFolderUI != value)
+                {
+                    _targetFolderUI = value;
+                    RaisePropertyChanged();
+                }
+            }
         }
 
 
@@ -74,11 +108,20 @@ namespace Dateien_Sortierprogramm.ViewModels
                 string selectedPath = dialog.FileName;
                 if (!string.IsNullOrEmpty(selectedPath))
                 {
-                    OrderElements.Add(new OrderElement() {SearchTerm="", TargetFolderPath = selectedPath + "\\" });
-                    this.IsVisible = Visibility.Collapsed;
+                   this.TargetFolderUI= selectedPath;
                 }
 
             }
+        }
+
+        public void AddingOrderElementsToGrid()
+        {
+            if(!String.IsNullOrWhiteSpace(SearchTermUI) && !String.IsNullOrWhiteSpace(TargetFolderUI))
+            {
+                OrderElements.Add(new OrderElement() { SearchTerm = SearchTermUI, TargetFolderPath = TargetFolderUI });
+            }
+            SearchTermUI = string.Empty;
+            TargetFolderUI = string.Empty;
         }
 
 
