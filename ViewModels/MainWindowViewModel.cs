@@ -9,20 +9,29 @@ using WPFBasics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace Dateien_Sortierprogramm.ViewModels
 {
     [Serializable]
     public class MainWindowViewModel : NotifyableBaseObject
     {
+        //Zu speichernde Daten
         public ObservableCollection<Folder> lstSourceFolders { get; set; } = new ObservableCollection<Folder>();
         public ObservableCollection<OrderElements> lstOrderElements { get; set; } = new ObservableCollection<OrderElements>();
+        
+       //Daten die nicht gespeichert werden können/müssen
+        [XmlIgnore]
         public ICommand SelectSourceFolderCommand { get; set; }
+        [XmlIgnore]
         public ICommand SelectTargetFolderCommand { get; set; }
+        [XmlIgnore]
         public ICommand CreateOrderElementCommand { get; set; }
+        [XmlIgnore]
         public ICommand SaveDataCommand { get; set; }
+        [XmlIgnore]
         public ICommand LoadDataCommand { get; set; }
-
+        [XmlIgnore]
         public Visibility IsVisible { get; set; } = Visibility.Visible;
         public MainWindowViewModel()
         {
@@ -153,10 +162,15 @@ namespace Dateien_Sortierprogramm.ViewModels
 
         private void LoadData()
         {
-            OrderElements fileContent = new OrderElements();
             MainWindowViewModel vm = XmlFileService.LoadXmlFile(this);
             if (vm == null)
+            {
                 MessageBox.Show("Datei enthält keine Daten oder falsche Datei wurde ausgewählt.");
+                return;
+            }
+            //Elemente in ViewModel laden
+            this.lstOrderElements = new ObservableCollection<OrderElements>(vm.lstOrderElements);
+            this.lstSourceFolders = new ObservableCollection<Folder>(vm.lstSourceFolders);
 
             //TODO: Auf Jahreszahlen prüfen
             //Prüfen ob Zielordnerpfade mit Jahresangabe für neues Jahr geupdated sollen, grade beim Steuerordner
