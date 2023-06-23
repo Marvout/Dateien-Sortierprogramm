@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dateien_Sortierprogramm.Data
 {
-    public class OrderElement
+    public class OrderElements
     {
         public string SearchTerm { get; set; } = "";
         public string TargetFolderPath { get; set; } = "";

@@ -13,11 +13,11 @@ namespace Dateien_Sortierprogramm.Services
         {
             return new Folder[]
             {
-                new Folder() { FolderPath = "Testpfad/Ich/Habe/Keine/Ahnung" },
-                new Folder() { FolderPath = "Testpfad/Ich/Habe/Keine/Ahnung" },
-                new Folder() { FolderPath = "Testpfad/Ich/Habe/Keine/Ahnung" },
-                new Folder() { FolderPath = "Testpfad/Ich/Habe/Keine/Ahnung" },
-                new Folder() { FolderPath = "Testpfad/Ich/Habe/Keine/Ahnung" }
+                new Folder() { FolderPath = "Testpfad1/Ich/Habe/Keine/Ahnung" },
+                new Folder() { FolderPath = "Testpfad2/Ich/Habe/Keine/Ahnung" },
+                new Folder() { FolderPath = "Testpfad3/Ich/Habe/Keine/Ahnung" },
+                new Folder() { FolderPath = "Testpfad4/Ich/Habe/Keine/Ahnung" },
+                new Folder() { FolderPath = "Testpfad5/Ich/Habe/Keine/Ahnung" }
             };
         }
     }
