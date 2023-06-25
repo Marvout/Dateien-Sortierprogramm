@@ -16,11 +16,14 @@ namespace Dateien_Sortierprogramm.ViewModels
     [Serializable]
     public class MainWindowViewModel : NotifyableBaseObject
     {
+        //TODO: Wenn ich manuelle Ordnerpfad in Zielordner Textbox eingebe, dann wird häufig das \ vergessen am Schluss
+        //TODO: Reihenfolge Anpassbar für OrderElements DataGrid, da sich dadurch vlt die Sortierreihenfolge ergibt?
+
         //Zu speichernde Daten
         public ObservableCollection<Folder> lstSourceFolders { get; set; } = new ObservableCollection<Folder>();
         public ObservableCollection<OrderElements> lstOrderElements { get; set; } = new ObservableCollection<OrderElements>();
-        
-       //Daten die nicht gespeichert werden können/müssen
+
+        //Daten die nicht gespeichert werden können/müssen
         [XmlIgnore]
         public ICommand SelectSourceFolderCommand { get; set; }
         [XmlIgnore]
@@ -32,19 +35,25 @@ namespace Dateien_Sortierprogramm.ViewModels
         [XmlIgnore]
         public ICommand LoadDataCommand { get; set; }
         [XmlIgnore]
+        public ICommand StartSortingServiceCommand { get; set; }
+        [XmlIgnore]
         public Visibility IsVisible { get; set; } = Visibility.Visible;
         public MainWindowViewModel()
         {
             //DummyServices
-            DummyFolderPathService serviceFolderPaths = new DummyFolderPathService();
-            foreach (var folderpath in serviceFolderPaths.SomeFolderStrings())
+            bool isDummyServices = false;
+            if (isDummyServices)
             {
-                lstSourceFolders.Add(folderpath);
-            }
-            DummyOrderElementsService serviceOrderElements = new DummyOrderElementsService();
-            foreach (var orderelement in serviceOrderElements.SomeOrderElementsStrings())
-            {
-                lstOrderElements.Add(orderelement);
+                DummyFolderPathService serviceFolderPaths = new DummyFolderPathService();
+                foreach (var folderpath in serviceFolderPaths.SomeFolderStrings())
+                {
+                    lstSourceFolders.Add(folderpath);
+                }
+                DummyOrderElementsService serviceOrderElements = new DummyOrderElementsService();
+                foreach (var orderelement in serviceOrderElements.SomeOrderElementsStrings())
+                {
+                    lstOrderElements.Add(orderelement);
+                }
             }
 
 
@@ -72,7 +81,12 @@ namespace Dateien_Sortierprogramm.ViewModels
             {
                 LoadData();
             });
+            this.StartSortingServiceCommand = new DelegateCommand((o) =>
+            {
+                StartSorting();
+            });
         }
+
 
 
         //Properties
@@ -106,7 +120,7 @@ namespace Dateien_Sortierprogramm.ViewModels
 
 
         //public Methods
-        public void SelectSourceFolder()
+        private void SelectSourceFolder()
         {
             var dialog = new CommonOpenFileDialog();
             dialog.IsFolderPicker = true;
@@ -123,7 +137,7 @@ namespace Dateien_Sortierprogramm.ViewModels
             }
         }
 
-        public void SelectTargetFolder()
+        private void SelectTargetFolder()
         {
             var dialog = new CommonOpenFileDialog();
             dialog.IsFolderPicker = true;
@@ -143,7 +157,7 @@ namespace Dateien_Sortierprogramm.ViewModels
             }
         }
 
-        public void AddingOrderElementsToGrid()
+        private void AddingOrderElementsToGrid()
         {
             if (!String.IsNullOrWhiteSpace(SearchTermUI) && !String.IsNullOrWhiteSpace(TargetFolderUI))
             {
@@ -154,7 +168,6 @@ namespace Dateien_Sortierprogramm.ViewModels
         }
 
 
-        //Private Methods
         private void SaveData()
         {
             XmlFileService.CreateXmlFile(this);
@@ -171,23 +184,28 @@ namespace Dateien_Sortierprogramm.ViewModels
             //Elemente in ViewModel laden. Dazu muss, wenn noch Elemente in den ObservableCollections, die Objekte leer sein
             //Dann wird über eine foreach-Schleife das Objekt wieder befüllt.
             this.lstOrderElements.Clear(); //Vorherige Elemente entfernen
-            foreach(var orderelement in vm.lstOrderElements)
+            foreach (var orderelement in vm.lstOrderElements)
             {
                 this.lstOrderElements.Add(orderelement);
             }
             this.lstSourceFolders.Clear();
-            foreach(var orderelements in vm.lstSourceFolders)
+            foreach (var orderelements in vm.lstSourceFolders)
             {
                 this.lstSourceFolders.Add(orderelements);
             }
-            
+
 
             //TODO: Auf Jahreszahlen prüfen
             //Prüfen ob Zielordnerpfade mit Jahresangabe für neues Jahr geupdated sollen, grade beim Steuerordner
             //vm = SortingAlgorithm.ChangeAllYearRelevantDirectionsToCurrentYear(xmlDataCollector);
         }
 
+        private void StartSorting()
+        {
+            SortingDataAlgorithm.StartSortingcService(this);
+        }
 
+        //Von ChatGPT erstellte Daten
         //private void SearchFiles()
         //{
         //    FileSearchService fileSearchService = new FileSearchService();

@@ -79,7 +79,7 @@ namespace Dateien_Sortierprogramm.Services
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.ToString());
+                    MessageBox.Show(e.ToString());
                 }
             }
             return vm;
