@@ -168,9 +168,19 @@ namespace Dateien_Sortierprogramm.ViewModels
                 MessageBox.Show("Datei enthält keine Daten oder falsche Datei wurde ausgewählt.");
                 return;
             }
-            //Elemente in ViewModel laden
-            this.lstOrderElements = new ObservableCollection<OrderElements>(vm.lstOrderElements);
-            this.lstSourceFolders = new ObservableCollection<Folder>(vm.lstSourceFolders);
+            //Elemente in ViewModel laden. Dazu muss, wenn noch Elemente in den ObservableCollections, die Objekte leer sein
+            //Dann wird über eine foreach-Schleife das Objekt wieder befüllt.
+            this.lstOrderElements.Clear(); //Vorherige Elemente entfernen
+            foreach(var orderelement in vm.lstOrderElements)
+            {
+                this.lstOrderElements.Add(orderelement);
+            }
+            this.lstSourceFolders.Clear();
+            foreach(var orderelements in vm.lstSourceFolders)
+            {
+                this.lstSourceFolders.Add(orderelements);
+            }
+            
 
             //TODO: Auf Jahreszahlen prüfen
             //Prüfen ob Zielordnerpfade mit Jahresangabe für neues Jahr geupdated sollen, grade beim Steuerordner

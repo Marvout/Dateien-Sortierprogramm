@@ -57,7 +57,7 @@ namespace Dateien_Sortierprogramm.Services
             bool? isDialogResult = openFileDialog.ShowDialog();
 
             //Objekt wird erzeugt in dem die Daten von xml geladen werden
-            vm = new MainWindowViewModel();
+            //vm = new MainWindowViewModel();
 
             if (isDialogResult == true)
             {
@@ -70,6 +70,10 @@ namespace Dateien_Sortierprogramm.Services
                     using (Stream s = File.OpenRead(fileName))
                     {
                         //TODO: Fehlerabfrage, ob Objekt null ist, also Fehlerbehandlung verbessern
+                        if (s == null)
+                        {
+                            MessageBox.Show("Datei konnte nicht geladen werden");
+                        }
                         vm = ser.Deserialize(s) as MainWindowViewModel;
                     }
                 }
