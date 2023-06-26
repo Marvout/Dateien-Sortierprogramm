@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using System.Windows.Controls;
+using System.Runtime.CompilerServices;
 
 namespace Dateien_Sortierprogramm.ViewModels
 {
@@ -56,7 +58,7 @@ namespace Dateien_Sortierprogramm.ViewModels
                 }
             }
 
-
+           
 
             //Delegate Initialisierung
             this.SelectSourceFolderCommand = new DelegateCommand((o) =>
@@ -118,8 +120,58 @@ namespace Dateien_Sortierprogramm.ViewModels
             }
         }
 
+        //Checkboxen
+        private List<string> lstFileFormats = new List<string>();
+        private bool checkBox_PDF;
 
-        //public Methods
+        public bool CheckBox_PDF
+        {
+            get => checkBox_PDF;
+            set
+            {
+                if (checkBox_PDF != value)
+                {
+                    checkBox_PDF = value;
+                    RaisePropertyChanged();
+                    CheckboxChanged(checkBox_PDF, ".pdf");
+                   
+                }
+            }
+        }
+        private bool checkBox_Excel;
+        public bool CheckBox_Excel
+        {
+            get => checkBox_Excel;
+            set
+            {
+                if (checkBox_Excel != value)
+                {
+                    checkBox_Excel = value;
+                    RaisePropertyChanged();
+                    CheckboxChanged(checkBox_Excel, ".xls");
+                    CheckboxChanged(checkBox_Excel, ".xlsx");
+                   
+                }
+            }
+        }
+
+        private void CheckboxChanged(bool? isChecked, string fileformat)
+        {
+            if (isChecked == true)
+            {
+                lstFileFormats.Add(fileformat);
+            }
+            if (isChecked == false)
+            {
+                lstFileFormats.Remove(fileformat);
+            }
+        }
+
+       
+
+        //private Methods
+
+
         private void SelectSourceFolder()
         {
             var dialog = new CommonOpenFileDialog();
@@ -202,7 +254,7 @@ namespace Dateien_Sortierprogramm.ViewModels
 
         private void StartSorting()
         {
-            SortingDataAlgorithm.StartSortingcService(this);
+            SortingDataAlgorithm.StartSortingcService(this, lstFileFormats);
         }
 
         //Von ChatGPT erstellte Daten

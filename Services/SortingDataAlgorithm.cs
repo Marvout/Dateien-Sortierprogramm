@@ -13,7 +13,7 @@ namespace Dateien_Sortierprogramm.Services
 {
     public class SortingDataAlgorithm
     {
-        public static void StartSortingcService(MainWindowViewModel vm)
+        public static void StartSortingcService(MainWindowViewModel vm, List<string>fileformats)
         {
             //Zählt mit wie viele Dateien sortiert wurden. Wenn diese Zahl null ist wird zurückgegeben, dass es derzeit keine
             //zu sortierenden Dateien gibt.
@@ -25,22 +25,17 @@ namespace Dateien_Sortierprogramm.Services
                 MessageBox.Show("Bitte eine Datei in den Zwischenspeicher Laden.");
                 return;
             }
+           
 
-            //TODO: Bestimmung von Liste, nach welchen Dateiformaten gesucht werden soll
-            List<string> fileTypes = new List<string>() { "*.pdf", "*.csv" };
-
-            //Erstelle neue Liste mit allen PDF Dateinamen in Input Folder!
-            //Auch andere Dateien einbinden wie excel oder Txt oder vlt auch Word oder Open Office dateien
+            //Alle Dateien mit zu suchenden Dateiformaten 
             foreach (Folder sourceFolder in vm.lstSourceFolders)
             {
-                //Beliebige Dateitypen suchen lassen 
-                //OPTIONAL: User selber ermöglichen welche Dateitypen gesucht werden sollen
                 List<string> allFileNames = new List<string>();
                
                 //Auflistung aller Dateien mit gesuchten Dateiformaten in gewählten Quellordner
-                for (int i = 0; i < fileTypes.Count(); i++)
+                for (int i = 0; i < fileformats.Count(); i++)
                 {
-                    string[] filenames = Directory.GetFiles(sourceFolder.FolderPath, fileTypes[i]);
+                    string[] filenames = Directory.GetFiles(sourceFolder.FolderPath, fileformats[i]);
                     foreach (string filename in filenames)
                     {
                         allFileNames.Add(filename);
@@ -100,6 +95,7 @@ namespace Dateien_Sortierprogramm.Services
                 MessageBox.Show("Derzeit keine Dateien zum Sortieren in den gewählten Quellordnern vorhanden. " +
                     "\n\nHinweise: " +
                     "\n\nMöglicherweise haben Sie noch keine Quellordner hinzugefügt." +
+                    "\n\nMöglicherweise wurden noch keine Dateiformate oder noch nicht die passenden Formate ausgewählt." +
                     "\n\nGegebenfalls sind Dateien vorhanden, aber noch kein Suchbegriff der in den Dateinamen vorkommt. Fügen " +
                     "Sie dann einfach weitere Suchbegriffe, die in dem Dateinamen stecken, mit Zielordnern hinzu. Starten Sie " +
                     "den Suchvorgang anschließend erneut.");

@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="20230507_145913.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Include="App.xaml" />
   </ItemGroup>
 
@@ -24,6 +28,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WPF Basics\WPF Basics.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="20230507_145913.jpg" />
   </ItemGroup>
 
 </Project>
