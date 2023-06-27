@@ -118,30 +118,33 @@
         <StackPanel Margin="5,0,0,0" Grid.Row="4"  >
             <CheckBox x:Name="chb_PDF" Content=".pdf" IsChecked="{Binding CheckBox_PDF}"/>
             <CheckBox x:Name="chb_Excel" Content=".xls, .xlsx" IsChecked="{Binding CheckBox_Excel}"/>
-            <CheckBox x:Name="chb_Word" Content=".doc, .docx"/>
-            <CheckBox x:Name="chb_Powerpoint" Content=".ppt, .pptx"/>
-            <CheckBox x:Name="chb_Text" Content=".txt"/>
-            <CheckBox x:Name="chb_CSV" Content=".csv"/>
-            <CheckBox x:Name="chb_ZIP" Content=".zip"/>
+            <CheckBox x:Name="chb_Word" Content=".doc, .docx" IsChecked="{Binding CheckBox_Word}"/>
+            <CheckBox x:Name="chb_Powerpoint" Content=".ppt, .pptx" IsChecked="{Binding CheckBox_Powerpoint}"/>
+            <CheckBox x:Name="chb_Text" Content=".txt" IsChecked="{Binding CheckBox_Text}"/>
+            <CheckBox x:Name="chb_CSV" Content=".csv" IsChecked="{Binding CheckBox_CSV}"/>
+            <CheckBox x:Name="chb_ZIP" Content=".zip" IsChecked="{Binding CheckBox_ZIP}"/>
         </StackPanel>
         <StackPanel Grid.Row="4"  Grid.Column="1">
-            <CheckBox x:Name="chb_JPG" Content=".jpg, .jpeg"/>
-            <CheckBox x:Name="chb_PNG" Content=".png"/>
-            <CheckBox x:Name="chb_GIF" Content=".gif"/>
-            <CheckBox x:Name="chb_BMP" Content=".bmp"/>
-            <CheckBox x:Name="chb_MP3" Content=".mp3"/>
-            <CheckBox x:Name="chb_WAV" Content=".wav"/>
-            <CheckBox x:Name="chb_MP4" Content=".mp4"/>
+            <CheckBox x:Name="chb_JPG" Content=".jpg, .jpeg" IsChecked="{Binding CheckBox_JPG}"/>
+            <CheckBox x:Name="chb_PNG" Content=".png" IsChecked="{Binding CheckBox_PNG}"/>
+            <CheckBox x:Name="chb_GIF" Content=".gif" IsChecked="{Binding CheckBox_GIF}"/>
+            <CheckBox x:Name="chb_BMP" Content=".bmp" IsChecked="{Binding CheckBox_BMP}"/>
+            <CheckBox x:Name="chb_MP3" Content=".mp3" IsChecked="{Binding CheckBox_MP3}"/>
+            <CheckBox x:Name="chb_WAV" Content=".wav" IsChecked="{Binding CheckBox_WAV}"/>
+            <CheckBox x:Name="chb_MP4" Content=".mp4" IsChecked="{Binding CheckBox_MP4}"/>
 
         </StackPanel>
         <StackPanel Grid.Row="4"  Grid.Column="2">
-            <CheckBox x:Name="chb_AVI" Content=".avi"/>
-            <CheckBox x:Name="chb_MOV" Content=".mov"/>
-            <CheckBox x:Name="chb_MKV" Content=".mkv"/>
-            <CheckBox x:Name="chb_WMV" Content=".wmv"/>
-            <CheckBox x:Name="chb_RAR" Content=".rar"/>
-            <CheckBox x:Name="chb_XML" Content=".xml"/>
-            <CheckBox x:Name="chb_JSON" Content=".json"/>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="chb_AVI" Content=".avi" IsChecked="{Binding CheckBox_AVI}" Margin="0,0,100,0"/>
+                <CheckBox x:Name="chb_All" Content="Alle Formate" IsChecked="{Binding CheckBox_AVI}"/>
+            </StackPanel>
+            <CheckBox x:Name="chb_MOV" Content=".mov" IsChecked="{Binding CheckBox_MOV}"/>
+            <CheckBox x:Name="chb_MKV" Content=".mkv" IsChecked="{Binding CheckBox_MKV}"/>
+            <CheckBox x:Name="chb_WMV" Content=".wmv" IsChecked="{Binding CheckBox_WMV}"/>
+            <CheckBox x:Name="chb_RAR" Content=".rar" IsChecked="{Binding CheckBox_RAR}"/>
+            <CheckBox x:Name="chb_XML" Content=".xml" IsChecked="{Binding CheckBox_XML}"/>
+            <CheckBox x:Name="chb_JSON" Content=".json" IsChecked="{Binding CheckBox_JSON}"/>
         </StackPanel>
 
         <!-->Unten: Laden, Speichern, Sortiervorgang starten-->
