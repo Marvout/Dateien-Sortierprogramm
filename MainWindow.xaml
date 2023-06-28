@@ -137,7 +137,7 @@
         <StackPanel Grid.Row="4"  Grid.Column="2">
             <StackPanel Orientation="Horizontal">
                 <CheckBox x:Name="chb_AVI" Content=".avi" IsChecked="{Binding CheckBox_AVI}" Margin="0,0,100,0"/>
-                <CheckBox x:Name="chb_All" Content="Alle Formate" IsChecked="{Binding CheckBox_AVI}"/>
+                <CheckBox x:Name="chb_All" Content="Alle Formate" IsChecked="{Binding CheckBox_All}"/>
             </StackPanel>
             <CheckBox x:Name="chb_MOV" Content=".mov" IsChecked="{Binding CheckBox_MOV}"/>
             <CheckBox x:Name="chb_MKV" Content=".mkv" IsChecked="{Binding CheckBox_MKV}"/>
