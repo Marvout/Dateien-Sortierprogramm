@@ -129,7 +129,6 @@ namespace Dateien_Sortierprogramm.ViewModels
                 if (!string.IsNullOrEmpty(selectedPath))
                 {
                     lstSourceFolders.Add(new Folder() { FolderPath = selectedPath + "\\" });
-                    this.IsVisible = Visibility.Collapsed;
                 }
 
             }

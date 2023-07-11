@@ -31,8 +31,8 @@ namespace Dateien_Sortierprogramm.Services
                 //Prüfung ob ViewModel null ist
                 if (vm == null)
                 {
-                    return;
                     MessageBox.Show("ViewModel enthält keine Daten. Null Exception");
+                    return;
                 }
                 string fileName = saveFileDialog.FileName;
 

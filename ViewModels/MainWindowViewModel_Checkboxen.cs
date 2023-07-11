@@ -360,58 +360,27 @@ namespace Dateien_Sortierprogramm.ViewModels
 
         private void ChangeCheckbox_All(bool isChecked)
         {
-             
-               
-
-            if(isChecked == true)
-            {
-                CheckBox_AVI = true;
-                CheckBox_BMP = true;
-                CheckBox_CSV = true;
-                CheckBox_Excel = true;
-                CheckBox_GIF = true;
-                CheckBox_JSON = true;
-                CheckBox_JPG = true;
-                CheckBox_MKV = true;
-                CheckBox_MOV = true;
-                CheckBox_MP3 = true;
-                CheckBox_MP4 = true;
-                CheckBox_PDF = true;
-                CheckBox_PNG = true;
-                CheckBox_Powerpoint = true;
-                CheckBox_RAR  = true;
-                CheckBox_Text = true;
-                CheckBox_WAV = true;
-                CheckBox_WMV = true;
-                CheckBox_Word = true;
-                CheckBox_XML = true;
-                CheckBox_ZIP = true;
-            }
-            else if (isChecked == false)
-            {
-                CheckBox_AVI = false;
-                CheckBox_BMP = false;
-                CheckBox_CSV = false;
-                CheckBox_Excel = false;
-                CheckBox_GIF = false;
-                CheckBox_JSON = false;
-                CheckBox_JPG = false;
-                CheckBox_MKV = false;
-                CheckBox_MOV = false;
-                CheckBox_MP3 = false;
-                CheckBox_MP4 = false;
-                CheckBox_PDF = false;
-                CheckBox_PNG = false;
-                CheckBox_Powerpoint = false;
-                CheckBox_RAR = false;
-                CheckBox_Text = false;
-                CheckBox_WAV = false;
-                CheckBox_WMV = false;
-                CheckBox_Word = false;
-                CheckBox_XML = false;
-                CheckBox_ZIP = false;
-
-            }
+            CheckBox_AVI = isChecked;
+            CheckBox_BMP = isChecked;
+            CheckBox_CSV = isChecked;
+            CheckBox_Excel = isChecked;
+            CheckBox_GIF = isChecked;
+            CheckBox_JSON = isChecked;
+            CheckBox_JPG = isChecked;
+            CheckBox_MKV = isChecked;
+            CheckBox_MOV = isChecked;
+            CheckBox_MP3 = isChecked;
+            CheckBox_MP4 = isChecked;
+            CheckBox_PDF = isChecked;
+            CheckBox_PNG = isChecked;
+            CheckBox_Powerpoint = isChecked;
+            CheckBox_RAR = isChecked;
+            CheckBox_Text = isChecked;
+            CheckBox_WAV = isChecked;
+            CheckBox_WMV = isChecked;
+            CheckBox_Word = isChecked;
+            CheckBox_XML = isChecked;
+            CheckBox_ZIP = isChecked;
         }
     }
 }
