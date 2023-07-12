@@ -12,6 +12,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using System.Windows.Controls;
 using System.Runtime.CompilerServices;
+using Dateien_Sortierprogramm.UIs;
 
 namespace Dateien_Sortierprogramm.ViewModels
 {
@@ -25,6 +26,7 @@ namespace Dateien_Sortierprogramm.ViewModels
         public ObservableCollection<Folder> lstSourceFolders { get; set; } = new ObservableCollection<Folder>();
         public ObservableCollection<OrderElements> lstOrderElements { get; set; } = new ObservableCollection<OrderElements>();
 
+        public ObservableCollection<LogInfos> lstLogInfo { get; set; } = new ObservableCollection<LogInfos>();    
         //Daten die nicht gespeichert werden können/müssen
         [XmlIgnore]
         public ICommand SelectSourceFolderCommand { get; set; }
@@ -39,7 +41,11 @@ namespace Dateien_Sortierprogramm.ViewModels
         [XmlIgnore]
         public ICommand StartSortingServiceCommand { get; set; }
         [XmlIgnore]
+        public ICommand CloseLogWindowCommand { get; set; }
+        [XmlIgnore]
         public Visibility IsVisible { get; set; } = Visibility.Visible;
+
+        public event EventHandler Cancel;
         public MainWindowViewModel()
         {
             //DummyServices
@@ -56,6 +62,11 @@ namespace Dateien_Sortierprogramm.ViewModels
                 {
                     lstOrderElements.Add(orderelement);
                 }
+                DummyLogInfoService serviceLogInfos = new DummyLogInfoService();
+                foreach (var logInfo in serviceLogInfos.SomeLogInfos())
+                {
+                    lstLogInfo.Add(logInfo);
+                }
             }
 
             //Delegate Initialisierung
@@ -68,7 +79,6 @@ namespace Dateien_Sortierprogramm.ViewModels
             {
                 SelectTargetFolder();
             });
-
             this.CreateOrderElementCommand = new DelegateCommand((o) =>
             {
                 AddingOrderElementsToGrid();
@@ -115,6 +125,7 @@ namespace Dateien_Sortierprogramm.ViewModels
                 }
             }
         }
+
 
         //private Methods
 
@@ -191,7 +202,8 @@ namespace Dateien_Sortierprogramm.ViewModels
                 this.lstSourceFolders.Add(orderelements);
             }
 
-            //Checkboxen
+            //Checkboxen Status laden
+            #region Checkboxen Laden
             CheckBox_AVI = vm.CheckBox_AVI;
             CheckBox_BMP = vm.CheckBox_BMP;
             CheckBox_CSV = vm.CheckBox_CSV;
@@ -213,15 +225,28 @@ namespace Dateien_Sortierprogramm.ViewModels
             CheckBox_Word = vm.CheckBox_Word;
             CheckBox_XML = vm.CheckBox_XML;
             CheckBox_ZIP = vm.CheckBox_ZIP;
-
+            #endregion
             //TODO: Auf Jahreszahlen prüfen
             //Prüfen ob Zielordnerpfade mit Jahresangabe für neues Jahr geupdated sollen, grade beim Steuerordner
             //vm = SortingAlgorithm.ChangeAllYearRelevantDirectionsToCurrentYear(xmlDataCollector);
+
+            //TODO: x e für Löschen von Einträgen erstellen
         }
 
         private void StartSorting()
         {
-            SortingDataAlgorithm.StartSortingcService(this, lstFileFormats);
+            //DummyLogInfoService serviceLogInfos = new DummyLogInfoService();
+            //foreach (var logInfo in serviceLogInfos.SomeLogInfos())
+            //{
+            //    lstLogInfo.Add(logInfo);
+            //}
+            SortingDataAlgorithm sortingDataAlgorithm = new SortingDataAlgorithm();
+            foreach (var logInfo in sortingDataAlgorithm.StartSortingcService(this, lstFileFormats))
+            {
+                lstLogInfo.Add(logInfo);
+            }
+            LogView logView = new LogView();
+            logView.Show();
         }
     }
 }

@@ -55,6 +55,7 @@ namespace Dateien_Sortierprogramm.ViewModels
                     RaisePropertyChanged();
                     CheckboxChanged(checkBox_Word, ".doc");
                     CheckboxChanged(checkBox_Word, ".docx");
+                    CheckboxChanged(checkBox_Word, ".odt");
 
                 }
             }

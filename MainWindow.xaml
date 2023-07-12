@@ -20,6 +20,7 @@
         </Style>
         <Style TargetType="Image">
             <Setter Property="Width" Value="20" />
+            <Setter Property="ToolTipService.InitialShowDelay" Value="100" />
         </Style>
     </Window.Resources>
     <Grid>
@@ -45,7 +46,7 @@
                     <DataGridTextColumn.Header>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Grid.Column="0" Text="Quellordner"/>
-                            <Image Source="/Resources/icons8-information-48.png" Margin="10,0,0,0" VerticalAlignment="Top">
+                            <Image  Source="/Resources/icons8-information-48.png" Margin="10,0,0,0" VerticalAlignment="Top" Cursor="Help">
                                 <Image.ToolTip>
                                     <StackPanel>
                                         <TextBlock Text="Ordner, in dem nach Dateien gesucht wird" />
@@ -72,7 +73,7 @@
             <Label.Content>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Suchwort"/>
-                    <Image Source="/Resources/icons8-information-48.png" Margin="10,0,0,0">
+                    <Image Source="/Resources/icons8-information-48.png" Margin="10,0,0,0" Cursor="Help">
                         <Image.ToolTip>
                             <StackPanel>
                                 <TextBlock Text="In einem Quellordner werden alle Dateien nach Suchwörtern durchsucht." />
@@ -90,7 +91,7 @@
             <Label.Content>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Zielordner"/>
-                    <Image x:Name="img_Tooltip" Margin="10,0,0,0" Source="/Resources/icons8-information-48.png">
+                    <Image x:Name="img_Tooltip" Margin="10,0,0,0" Source="/Resources/icons8-information-48.png" Cursor="Help">
                         <Image.ToolTip>
                             <StackPanel>
                                 <TextBlock Text="Ein Ordner in den eine Datei einsortiert wird," />
@@ -158,7 +159,7 @@
         <StackPanel Margin="5,0,0,0" Grid.Row="4"  >
             <CheckBox x:Name="chb_PDF" Content=".pdf" IsChecked="{Binding CheckBox_PDF}"/>
             <CheckBox x:Name="chb_Excel" Content=".xls, .xlsx" IsChecked="{Binding CheckBox_Excel}"/>
-            <CheckBox x:Name="chb_Word" Content=".doc, .docx" IsChecked="{Binding CheckBox_Word}"/>
+            <CheckBox x:Name="chb_Word" Content=".doc, .docx, .odt" IsChecked="{Binding CheckBox_Word}"/>
             <CheckBox x:Name="chb_Powerpoint" Content=".ppt, .pptx" IsChecked="{Binding CheckBox_Powerpoint}"/>
             <CheckBox x:Name="chb_Text" Content=".txt" IsChecked="{Binding CheckBox_Text}"/>
             <CheckBox x:Name="chb_CSV" Content=".csv" IsChecked="{Binding CheckBox_CSV}"/>
@@ -190,6 +191,6 @@
         <!-->Unten: Laden, Speichern, Sortiervorgang starten-->
         <Button x:Name ="btn_Load" Margin="10"   Grid.Row="5" Grid.Column="0"  Content="Profil Laden" Command="{Binding LoadDataCommand}"          />
         <Button x:Name="btn_Save" Margin="10"   Grid.Row="5" Grid.Column="1"    Content="Profil Speichern" Command="{Binding SaveDataCommand}"      />
-        <Button x:Name ="btn_Start" Margin="10"   Grid.Row="5" Grid.Column="2"  Content="Sortiervorgang starten" Command="{Binding StartSortingServiceCommand}"       />
+        <Button x:Name ="btn_Start" Margin="10"   Grid.Row="5" Grid.Column="2"  Content="Sortiervorgang starten" Command="{Binding StartSortingServiceCommand}" />
     </Grid>
 </Window>
