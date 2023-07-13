@@ -84,18 +84,18 @@ namespace Dateien_Sortierprogramm.Services
                                     FromFolder = sourceFolder.FolderPath,
                                     ToFolder = targetpath
                                 });
-                                MessageBox.Show("Datei: " + filenameshort.Name + "\n"+
-                                    "Von Ordner: " + sourceFolder.FolderPath + "\n"+
-                                    "Nach Ordner: " + targetpath);
+                                //MessageBox.Show("Datei: " + filenameshort.Name + "\n"+
+                                //    "Von Ordner: " + sourceFolder.FolderPath + "\n"+
+                                //    "Nach Ordner: " + targetpath);
                             }
                             catch
                             {
 
                                 if (!Directory.Exists(filename))
                                     errorMessage += "Es scheint etwas nicht mit dem Dateinamen zu stimmen.\n" +
-                                        "Dateiname: " + filename + "\n";
+                                        "Dateiname: " + filename + "\n\n";
                                 if (!Directory.Exists(targetpath))
-                                    errorMessage += "Der Zielordnerpfad " + targetpath + "ist entweder veraltet, es ist keine Verbindung damit hergestellt (Netzwerk) oder er ist nicht richtig.\n";
+                                    errorMessage += "Der Zielordnerpfad " + targetpath + "ist entweder veraltet, es ist keine Verbindung damit hergestellt (Netzwerk) oder er ist nicht richtig.\n\n";
 
                                 MessageBox.Show(errorMessage);
                             }
