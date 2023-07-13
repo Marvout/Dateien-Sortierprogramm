@@ -80,11 +80,13 @@ namespace Dateien_Sortierprogramm.Services
                                 File.Move(filename, targetpath + filenameshort.Name);
                                 logInfos.Add(new LogInfos()
                                 {
-                                    File = filenameshort.ToString(),
+                                    File = filenameshort.Name,
                                     FromFolder = sourceFolder.FolderPath,
                                     ToFolder = targetpath
                                 });
-                                MessageBox.Show(filenameshort.Name + "\n=====>  " + targetpath);
+                                MessageBox.Show("Datei: " + filenameshort.Name + "\n"+
+                                    "Von Ordner: " + sourceFolder.FolderPath + "\n"+
+                                    "Nach Ordner: " + targetpath);
                             }
                             catch
                             {

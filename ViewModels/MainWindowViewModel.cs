@@ -26,7 +26,19 @@ namespace Dateien_Sortierprogramm.ViewModels
         public ObservableCollection<Folder> lstSourceFolders { get; set; } = new ObservableCollection<Folder>();
         public ObservableCollection<OrderElements> lstOrderElements { get; set; } = new ObservableCollection<OrderElements>();
 
-        public ObservableCollection<LogInfos> lstLogInfo { get; set; } = new ObservableCollection<LogInfos>();    
+        private ObservableCollection<LogInfos> _lstLogInfos = new ObservableCollection<LogInfos>();
+        public ObservableCollection<LogInfos> LstLogInfos
+        {
+            get => _lstLogInfos;
+            set
+            {
+                if (value != null)
+                {
+                    _lstLogInfos = value;
+                    RaisePropertyChanged(nameof(LstLogInfos));
+                }
+            }
+        }    
         //Daten die nicht gespeichert werden können/müssen
         [XmlIgnore]
         public ICommand SelectSourceFolderCommand { get; set; }
@@ -65,7 +77,7 @@ namespace Dateien_Sortierprogramm.ViewModels
                 DummyLogInfoService serviceLogInfos = new DummyLogInfoService();
                 foreach (var logInfo in serviceLogInfos.SomeLogInfos())
                 {
-                    lstLogInfo.Add(logInfo);
+                    LstLogInfos.Add(logInfo);
                 }
             }
 
@@ -243,9 +255,9 @@ namespace Dateien_Sortierprogramm.ViewModels
             SortingDataAlgorithm sortingDataAlgorithm = new SortingDataAlgorithm();
             foreach (var logInfo in sortingDataAlgorithm.StartSortingcService(this, lstFileFormats))
             {
-                lstLogInfo.Add(logInfo);
+                LstLogInfos.Add(logInfo);
             }
-            LogView logView = new LogView();
+            LogView logView = new LogView(this);
             logView.Show();
         }
     }

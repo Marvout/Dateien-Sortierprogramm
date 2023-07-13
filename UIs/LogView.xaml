@@ -20,7 +20,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <DataGrid ItemsSource="{Binding lstLogInfo}" Focusable="False" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid ItemsSource="{Binding LstLogInfos}" Focusable="False" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Datei" Width="*" Binding="{Binding File}"/>
                 <DataGridTextColumn Header="Von" Width="*" Binding="{Binding FromFolder}"/>

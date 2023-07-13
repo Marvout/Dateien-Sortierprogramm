@@ -20,9 +20,10 @@ namespace Dateien_Sortierprogramm.UIs
     /// </summary>
     public partial class LogView : Window
     {
-        public LogView()
+        public LogView(MainWindowViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
