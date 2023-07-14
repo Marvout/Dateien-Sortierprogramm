@@ -19,27 +19,27 @@ namespace Dateien_Sortierprogramm.ViewModels
     [Serializable]
     public partial class MainWindowViewModel : NotifyableBaseObject
     {
-        //TODO: Wenn ich manuelle Ordnerpfad in Zielordner Textbox eingebe, dann wird häufig das \ vergessen am Schluss
         //TODO: Reihenfolge Anpassbar für OrderElements DataGrid, da sich dadurch vlt die Sortierreihenfolge ergibt?
 
         //Zu speichernde Daten
         public ObservableCollection<Folder> lstSourceFolders { get; set; } = new ObservableCollection<Folder>();
         public ObservableCollection<OrderElements> lstOrderElements { get; set; } = new ObservableCollection<OrderElements>();
 
-        private ObservableCollection<LogInfos> _lstLogInfos = new ObservableCollection<LogInfos>();
-        public ObservableCollection<LogInfos> LstLogInfos
-        {
-            get => _lstLogInfos;
-            set
-            {
-                if (value != null)
-                {
-                    _lstLogInfos = value;
-                    RaisePropertyChanged(nameof(LstLogInfos));
-                }
-            }
-        }    
+        // private ObservableCollection<LogInfos> _lstLogInfos = new ObservableCollection<LogInfos>();
+        public ObservableCollection<LogInfos> LstLogInfos { get; set; } = new ObservableCollection<LogInfos>();
+        //{
+        //    get => _lstLogInfos;
+        //    set
+        //    {
+        //        if (value != null)
+        //        {
+        //            _lstLogInfos = value;
+        //            RaisePropertyChanged(nameof(LstLogInfos));
+        //        }
+        //    }
+        //}
         //Daten die nicht gespeichert werden können/müssen
+        #region Commands
         [XmlIgnore]
         public ICommand SelectSourceFolderCommand { get; set; }
         [XmlIgnore]
@@ -55,9 +55,17 @@ namespace Dateien_Sortierprogramm.ViewModels
         [XmlIgnore]
         public ICommand CloseLogWindowCommand { get; set; }
         [XmlIgnore]
-        public Visibility IsVisible { get; set; } = Visibility.Visible;
+        public ICommand DeleteDataGridRowFolderCommand { get; set; }
+        [XmlIgnore]
+        public ICommand DeleteDataGridRowOrderElementsCommand { get; set; }
+        #endregion
+
+        //[XmlIgnore]
+        //public Visibility IsVisible { get; set; } = Visibility.Visible;
 
         public event EventHandler Cancel;
+
+        //Konstruktor
         public MainWindowViewModel()
         {
             //DummyServices
@@ -107,7 +115,17 @@ namespace Dateien_Sortierprogramm.ViewModels
             {
                 StartSorting();
             });
+            this.DeleteDataGridRowFolderCommand = new DelegateCommand((o) =>
+            {
+                DeleteDataGridRowFolder();
+            });
+            this.DeleteDataGridRowOrderElementsCommand = new DelegateCommand((o) =>
+            {
+                DeleteDataGridRowOrderElements();
+            });
         }
+
+
 
         //Properties
         private string _searchTermUI;
@@ -138,6 +156,33 @@ namespace Dateien_Sortierprogramm.ViewModels
             }
         }
 
+        private Folder _selectedItemFolder;
+        public Folder SelectedItemFolder
+        {
+            get => _selectedItemFolder;
+            set
+            {
+                if (_selectedItemFolder != value)
+                {
+                    _selectedItemFolder = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private OrderElements _selectedItemOrderElements;
+        public OrderElements SelectedItemOrderElements
+        {
+            get => _selectedItemOrderElements;
+            set
+            {
+                if(value != _selectedItemOrderElements)
+                {
+                    _selectedItemOrderElements = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
 
         //private Methods
 
@@ -259,6 +304,22 @@ namespace Dateien_Sortierprogramm.ViewModels
             }
             LogView logView = new LogView(this);
             logView.Show();
+        }
+
+        private void DeleteDataGridRowFolder()
+        {
+            if (null != SelectedItemFolder)
+            {
+                lstSourceFolders.Remove(SelectedItemFolder);
+            }
+        }
+
+        private void DeleteDataGridRowOrderElements()
+        {
+            if (null != SelectedItemOrderElements)
+            {
+                lstOrderElements.Remove(SelectedItemOrderElements);
+            }
         }
     }
 }
