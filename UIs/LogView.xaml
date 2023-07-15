@@ -22,9 +22,9 @@
         </Grid.RowDefinitions>
         <DataGrid ItemsSource="{Binding LstLogInfos}" Focusable="False" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Datei" Width="*" Binding="{Binding File}"/>
-                <DataGridTextColumn Header="Von" Width="*" Binding="{Binding FromFolder}"/>
-                <DataGridTextColumn Header="Nach" Width="*" Binding="{Binding ToFolder}"/>
+                <DataGridTextColumn Header="Datei" Width="Auto" Binding="{Binding File}"/>
+                <DataGridTextColumn Header="Von" Width="Auto" Binding="{Binding FromFolder}"/>
+                <DataGridTextColumn Header="Nach" Width="Auto" Binding="{Binding ToFolder}"/>
             </DataGrid.Columns>
         </DataGrid>
         <Button Grid.Row="1" Content="Schließen" HorizontalAlignment="Center" Width="200" Margin="10"

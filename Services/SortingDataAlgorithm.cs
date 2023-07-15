@@ -104,18 +104,23 @@ namespace Dateien_Sortierprogramm.Services
                 }
             }
             if (_countSortedFiles == 0)
-                MessageBox.Show("Derzeit keine Dateien zum Sortieren in den gewählten Quellordnern vorhanden. " +
+            {
+
+                MessageBox.Show("Derzeit keine Dateien zum Sortieren. " +
                     "\n\nHinweise: " +
                     "\n\nMöglicherweise haben Sie noch keine Quellordner hinzugefügt." +
                     "\n\nMöglicherweise wurden noch keine Dateiformate oder noch nicht die passenden Formate ausgewählt." +
                     "\n\nGegebenfalls sind Dateien vorhanden, aber noch kein Suchbegriff der in den Dateinamen vorkommt. Fügen " +
                     "Sie dann einfach weitere Suchbegriffe, die in dem Dateinamen stecken, mit Zielordnern hinzu. Starten Sie " +
                     "den Suchvorgang anschließend erneut.");
+                return null;
+            }
             return logInfos;
         }
 
 
         //TODO: Hard coded strings wie "Kontoauszug" Nicht im Code belassen, sondern Nutzereingaben ermöglichen
+        
         //private static string SortingDownloadFiles(FileInfo filename)
         //{
         //    string oldFilename = filename.Name;

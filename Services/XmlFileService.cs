@@ -69,10 +69,9 @@ namespace Dateien_Sortierprogramm.Services
                     XmlSerializer ser = new XmlSerializer(typeof(MainWindowViewModel));
                     using (Stream s = File.OpenRead(fileName))
                     {
-                        //TODO: Fehlerabfrage, ob Objekt null ist, also Fehlerbehandlung verbessern
                         if (s == null)
                         {
-                            MessageBox.Show("Datei konnte nicht geladen werden");
+                            MessageBox.Show("Datei konnte nicht geladen werden.");
                         }
                         vm = ser.Deserialize(s) as MainWindowViewModel;
                     }

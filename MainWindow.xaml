@@ -33,7 +33,6 @@
         </Style>
         <!--DeleteButton Style-->
         <Style TargetType="Button" x:Key="DeleteButtonStyle">
-            <Setter Property="ToolTip" Value="Löschen" />
             <Setter Property="Background" Value="{x:Null}" />
             <Setter Property="Foreground" Value="{x:Null}" />
             <Setter Property="BorderBrush" Value="{x:Null}" />
@@ -83,7 +82,7 @@
                         <DataTemplate>
                             <Button Style="{StaticResource DeleteButtonStyle}" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
                                     Command="{Binding DeleteDataGridRowFolderCommand}" >
-                                <Image Style="{StaticResource ImageStyle}" Source="/Resources/icons8-löschen-48.png"/>
+                                <Image ToolTip="Löschen" Style="{StaticResource ImageStyle}" Source="/Resources/icons8-x-48(2).png"/>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -152,7 +151,7 @@
                             <DataTemplate>
                                 <Button Style="{StaticResource DeleteButtonStyle}" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
                                     Command="{Binding DeleteDataGridRowOrderElementsCommand}">
-                                    <Image  Style="{StaticResource ImageStyle}" Source="/Resources/icons8-löschen-48.png"/>
+                                    <Image ToolTip="Löschen" Style="{StaticResource ImageStyle}" Source="/Resources/icons8-x-48(2).png"/>
                                 </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

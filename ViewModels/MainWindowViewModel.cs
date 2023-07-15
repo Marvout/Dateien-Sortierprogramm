@@ -176,7 +176,7 @@ namespace Dateien_Sortierprogramm.ViewModels
             get => _selectedItemOrderElements;
             set
             {
-                if(value != _selectedItemOrderElements)
+                if (value != _selectedItemOrderElements)
                 {
                     _selectedItemOrderElements = value;
                     RaisePropertyChanged();
@@ -286,8 +286,6 @@ namespace Dateien_Sortierprogramm.ViewModels
             //TODO: Auf Jahreszahlen prüfen
             //Prüfen ob Zielordnerpfade mit Jahresangabe für neues Jahr geupdated sollen, grade beim Steuerordner
             //vm = SortingAlgorithm.ChangeAllYearRelevantDirectionsToCurrentYear(xmlDataCollector);
-
-            //TODO: x e für Löschen von Einträgen erstellen
         }
 
         private void StartSorting()
@@ -298,12 +296,17 @@ namespace Dateien_Sortierprogramm.ViewModels
             //    lstLogInfo.Add(logInfo);
             //}
             SortingDataAlgorithm sortingDataAlgorithm = new SortingDataAlgorithm();
-            foreach (var logInfo in sortingDataAlgorithm.StartSortingcService(this, lstFileFormats))
+            IEnumerable<LogInfos> logInfos = sortingDataAlgorithm.StartSortingcService(this, lstFileFormats);
+            if (logInfos != null)
             {
-                LstLogInfos.Add(logInfo);
+                foreach (var logInfo in logInfos)
+                {
+                    LstLogInfos.Add(logInfo);
+                }
+                LogView logView = new LogView(this);
+                logView.Show();
+                MessageBox.Show("Dateien wurden erfolgreich einsortiert. Im Protkollfenster, wird angezeigt, welche Datei von wo nach wo verschoben wurde.");
             }
-            LogView logView = new LogView(this);
-            logView.Show();
         }
 
         private void DeleteDataGridRowFolder()
