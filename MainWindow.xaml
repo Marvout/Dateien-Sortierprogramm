@@ -38,13 +38,8 @@
             <Setter Property="Foreground" Value="{x:Null}" />
             <Setter Property="BorderBrush" Value="{x:Null}" />
             <Setter Property="OpacityMask" Value="{x:Null}" />
-            <!--<Setter Property="Width" Value="Auto"/>
-            <Setter Property="Height" Value="Auto"/>-->
-            <Setter Property="Content">
-                <Setter.Value>
-                    <Image Style="{StaticResource ImageStyle}" Source="\Resources\icons8-löschen-48.png" />
-                </Setter.Value>
-            </Setter>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="Auto"/>
         </Style>
     </Window.Resources>
     <Grid>
@@ -88,6 +83,7 @@
                         <DataTemplate>
                             <Button Style="{StaticResource DeleteButtonStyle}" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
                                     Command="{Binding DeleteDataGridRowFolderCommand}" >
+                                <Image Style="{StaticResource ImageStyle}" Source="/Resources/icons8-löschen-48.png"/>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -156,6 +152,7 @@
                             <DataTemplate>
                                 <Button Style="{StaticResource DeleteButtonStyle}" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
                                     Command="{Binding DeleteDataGridRowOrderElementsCommand}">
+                                    <Image  Style="{StaticResource ImageStyle}" Source="/Resources/icons8-löschen-48.png"/>
                                 </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
