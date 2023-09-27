@@ -4,16 +4,42 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dateien_Sortierprogramm"
-        xmlns:vm="clr-namespace:Dateien_Sortierprogramm.ViewModel"
+        xmlns:vm="clr-namespace:Dateien_Sortierprogramm.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="800">
-    <!--<Window.DataContext>
-        <vm:MainPageViewModel/>
-    </Window.DataContext>-->
+        Title="MainWindow" Height="700" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
 
     <Window.Resources>
         <Style TargetType="TextBox">
             <Setter Property="Height" Value="25"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Height" Value="25"/>
+        </Style>
+        <!--Image Basic Style--> 
+        <Style TargetType="Image" x:Key="ImageStyle" >
+            <Setter Property="Width" Value="20"/>
+            <!--<Setter Property="Height" Value="20"/>-->
+            <Setter Property="ToolTipService.InitialShowDelay" Value="100" />
+        </Style>
+        <!--Info Image with ToolTip-->
+        <Style TargetType="Image" x:Key="InfoImage" BasedOn="{StaticResource ImageStyle}">
+            <Setter Property="Source" Value="/Resources/icons8-information-48.png" />
+            <Setter Property="Cursor" Value="Help"/>
+            <Setter Property="Margin" Value="10,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <!--DeleteButton Style-->
+        <Style TargetType="Button" x:Key="DeleteButtonStyle">
+            <Setter Property="Background" Value="{x:Null}" />
+            <Setter Property="Foreground" Value="{x:Null}" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="OpacityMask" Value="{x:Null}" />
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="Auto"/>
         </Style>
     </Window.Resources>
     <Grid>
@@ -25,43 +51,154 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <!--Labels-->
-        <Label x:Name="lbl_SourceFolder" Grid.Row="0" Grid.Column="2"  VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="100" Content="Quellordner" Margin="10,5,0,0"/>
-        <Label x:Name="lbl_TargetFolder" Grid.Row="1" Grid.Column ="1"  VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="100" Content="Zielordner" Margin="10,35,0,0"/>
-        <Label x:Name="lbl_Searchterm" Grid.Row="1" Grid.Column="0"  VerticalAlignment="Top" HorizontalAlignment="Left" Height="30" Width="100" Content="Suchwort" Margin="10,35,0,0"/>
-        <Label x:Name="lbl_TaxFolderStructure"  Grid.Row="2" Grid.Column="1" Margin="10,5"  VerticalAlignment="Top"  Height="30" Width="240" Content="Ordnerpfad in der Struktur angelegt wird:" />
-
-        <!--TextBoxes-->
-        <TextBox x:Name="txt_Keyword"  Margin="10,70,10,10" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top"   Text="{Binding Suchwort, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox x:Name="txt_TargetFolder" Width="200" Margin="10,70,50,10" Grid.Row="1" Grid.Column="1"  VerticalAlignment="Top"        />
-        <TextBox x:Name="txt_FolderForTaxStructure"  Grid.Row="2" Grid.Column="2" VerticalAlignment="Top" Width="200" Margin="10,10,50,10"/>
-
-        <!--Buttons-->
-        <Button x:Name="btn_Add" VerticalAlignment="Top" Margin="10,70,10,10" Height="30" Grid.Row="1" Grid.Column="2"   Click="btn_Add_Click"       Content="Hinzufügen"     />
-        <Button x:Name="btn_Add_Sources" VerticalAlignment="Top" Margin="10,35,10,0" Height="30" Grid.Row="0" Grid.Column="2"   Click="btn_Add_Sources_Click"  Command="{Binding AddSourceFolderCommand}"    Content="Hinzufügen"     />
-        <Button x:Name="btn_Save" Margin="10"  Height="30" Grid.Row="2" Grid.Column="0"  Click="btn_Save_Click"      Content="Speichern"      />
-        <Button x:Name ="btn_Load" Margin="10"  Height="30" Grid.Row="2" Grid.Column="1"  Click="btn_Load_Click"      Content="Laden"          />
-        <Button x:Name ="btn_Start" Margin="10"  Height="30" Grid.Row="2" Grid.Column="2"  Click="btn_Start_Click"    Content="Starten"       />
-        <Button x:Name="btn_AddTargetFolder" VerticalAlignment ="Top" Margin="214,72,2,0" Height="20" Width="30" Grid.Row="1" Grid.Column="1" Click="btn_AddTargetFolder_Click" Content="..."/>
-        <Button x:Name="btn_AddTaxStructreFolder"  VerticalAlignment ="Top" Margin="10,12,-200,0" Height="20" Width="30" Grid.Row="2" Grid.Column="2" Click="btn_AddTaxStructreFolder_Click" Content="..."/>
-
-        <!--CheckBoxes-->
-        <CheckBox x:Name="chb_isTaxfolderStructreDesired" Height="30" VerticalAlignment="Top" Content="Steuerordnerstruktur angelegen?" Margin="10" Grid.Row="2" Click="chb_isTaxfolderStructreDesired_Click"   />
-        <!--DataGrid-->
-        <DataGrid x:Name="dg_Sorting"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="10,149,10,0" AutoGenerateColumns="False" CanUserAddRows="False">
+        <!--DataGrid oben: Ordner in denen gesucht werden soll-->
+        <DataGrid Margin="5" Grid.ColumnSpan="3" SelectedItem="{Binding SelectedItemFolder}" x:Name="dglstSourceFolders" ItemsSource="{Binding lstSourceFolders}" AutoGenerateColumns="False"  Focusable="False" CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Suchwort}" Header="Suchwort" Width="*" />
-                <DataGridTextColumn Header="Zielordner" Binding="{Binding Zielordner}" Width="2*"/>
+                <DataGridTextColumn Width="*" Binding="{Binding FolderPath}">
+                    <DataGridTextColumn.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Grid.Column="0" Text="Quellordner"/>
+                            <Image  Style="{StaticResource InfoImage}">
+                                <Image.ToolTip>
+                                    <StackPanel>
+                                        <TextBlock Text="Ordner, in dem nach Dateien gesucht wird" />
+                                        <TextBlock Text="und dann anhand von einem Suchwort in einen" />
+                                        <TextBlock Text="sogenannten Zielordner einsortiert wird." />
+                                    </StackPanel>
+                                </Image.ToolTip>
+                            </Image>
+                            <Button x:Name="btn_SourceFolder" Grid.Column="2" Content="Quellordner hinzufügen" Margin="20,0,0,0" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Command="{Binding SelectSourceFolderCommand}"/>
+                        </StackPanel>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Width="30"> 
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource DeleteButtonStyle}" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
+                                    Command="{Binding DeleteDataGridRowFolderCommand}" >
+                                <Image ToolTip="Löschen" Style="{StaticResource ImageStyle}" Source="/Resources/icons8-x-48(2).png"/>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
+            <!--<DataGridTextColumn Header="Quellordner (Ordner, in denen nach Dateien gesucht werden soll)" Width="*">-->
+
+            <!--<TextBlock Grid.Column="0" Text="Quellordner (Ordner, in denen nach Dateien gesucht werden soll)"/>
+                            <Button Grid.Column="2" Content="Quellordner hinzufügen"/>-->
+
         </DataGrid>
-        <DataGrid x:Name="dg_SourceFolders" Grid.Column="0" Grid.ColumnSpan="2" Margin="10" AutoGenerateColumns="False" CanUserAddRows="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Quellordner" Binding ="{Binding Quellordner}" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
+
+        <!--Suchwort und Zielordner-->
+
+        <Label x:Name="lbl_Searchterm" Grid.Row="1" Grid.Column="0"  VerticalAlignment="Top" HorizontalAlignment="Left"   Margin="10,35,0,0">
+            <Label.Content>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Suchwort"/>
+                    <Image Style="{StaticResource InfoImage}" >
+                        <Image.ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="In einem Quellordner werden alle Dateien nach Suchwörtern durchsucht." />
+                                <TextBlock Text="Wird ein Suchwort gefunden, dann wird die Datei in den entsprechenden Zielordner einsortiert." />
+                                <TextBlock Text="Beispiel: In einer Datei mit dem Namen 2023_11_01_Freizeit_Gitarre ist das Suchwort Freizeit enthalten." />
+                                <TextBlock Text="Für dieses Suchwort existiert ein Zielordner namens Freizeit. In diesen wird die gefundene Datei dann verschoben."/>
+                            </StackPanel>
+                        </Image.ToolTip>
+                    </Image>
+                </StackPanel>
+            </Label.Content>
+        </Label>
+        <TextBox x:Name="txt_Keyword"  Margin="10,70,10,10" Grid.Row="1" Grid.Column="0" VerticalAlignment="Bottom" Text="{Binding SearchTermUI}" />
+        <Label x:Name="lbl_TargetFolder"  HorizontalAlignment="Left" Grid.Row="1" Grid.Column ="1" VerticalAlignment="Top"   Margin="10,35,0,0">
+            <Label.Content>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Zielordner"/>
+                    <Image x:Name="img_Tooltip" Style="{StaticResource InfoImage}">
+                        <Image.ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="Ein Ordner in den eine Datei einsortiert wird," />
+                                <TextBlock Text="wenn zum entsprechenden Suchwort eine Datei im " />
+                                <TextBlock Text="Quellordner gefunden wurde" />
+                            </StackPanel>
+                        </Image.ToolTip>
+                    </Image>
+                </StackPanel>
+            </Label.Content>
+        </Label>
+        <TextBox x:Name="txt_TargetFolder"  Width="200" Margin="10,70,50,10" Grid.Row="1" Grid.Column="1"  VerticalAlignment="Bottom" Text="{Binding TargetFolderUI}"        />
+        <Button x:Name="btn_AddTargetFolder" VerticalAlignment ="Bottom" Margin="214,10,10,10"  Width="30" Grid.Row="1" Grid.Column="1" Content="..." Command="{Binding SelectTargetFolderCommand}" />
+        <Button x:Name="btn_AddOrderElementsToGrid" VerticalAlignment="Bottom" Margin="10"  Grid.Row="1" Grid.Column="2"  Content="Hinzufügen" Command="{Binding CreateOrderElementCommand}"     />
+
+        <!--DataGrid Mitte: Suchdefinition-->
+        <Grid Margin="5" Grid.Row="2"  Grid.Column="0" Grid.ColumnSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label Content="In Quellordner wird nach Suchbegriffen gesucht und in die Zielordner einsortiert" />
+            <DataGrid x:Name="dg_Sorting" Grid.Row="1" SelectedItem="{Binding SelectedItemOrderElements}" ItemsSource="{Binding lstOrderElements}" CanUserAddRows="False" AutoGenerateColumns="False" Focusable="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Suchwort" Width="*" Binding="{Binding SearchTerm}" />
+                    <DataGridTextColumn Header="Zielordner" Width="2*" Binding="{Binding TargetFolderPath}"/>
+                    <DataGridTemplateColumn Width="30">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource DeleteButtonStyle}" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
+                                    Command="{Binding DeleteDataGridRowOrderElementsCommand}">
+                                    <Image ToolTip="Löschen" Style="{StaticResource ImageStyle}" Source="/Resources/icons8-x-48(2).png"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+
+        <!--Dateien, die gesucht werden sollen Auswahl-->
+        <Label Grid.Row="3" Grid.ColumnSpan="3" Margin="5,0,0,0" Content="Nach welchen Dateiformaten soll gesucht werden?" />
+        <StackPanel Margin="5,0,0,0" Grid.Row="4"  >
+            <CheckBox x:Name="chb_PDF" Content=".pdf" IsChecked="{Binding CheckBox_PDF}"/>
+            <CheckBox x:Name="chb_Excel" Content=".xls, .xlsx" IsChecked="{Binding CheckBox_Excel}"/>
+            <CheckBox x:Name="chb_Word" Content=".doc, .docx, .odt" IsChecked="{Binding CheckBox_Word}"/>
+            <CheckBox x:Name="chb_Powerpoint" Content=".ppt, .pptx" IsChecked="{Binding CheckBox_Powerpoint}"/>
+            <CheckBox x:Name="chb_Text" Content=".txt" IsChecked="{Binding CheckBox_Text}"/>
+            <CheckBox x:Name="chb_CSV" Content=".csv" IsChecked="{Binding CheckBox_CSV}"/>
+            <CheckBox x:Name="chb_ZIP" Content=".zip" IsChecked="{Binding CheckBox_ZIP}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="4"  Grid.Column="1">
+            <CheckBox x:Name="chb_JPG" Content=".jpg, .jpeg" IsChecked="{Binding CheckBox_JPG}"/>
+            <CheckBox x:Name="chb_PNG" Content=".png" IsChecked="{Binding CheckBox_PNG}"/>
+            <CheckBox x:Name="chb_GIF" Content=".gif" IsChecked="{Binding CheckBox_GIF}"/>
+            <CheckBox x:Name="chb_BMP" Content=".bmp" IsChecked="{Binding CheckBox_BMP}"/>
+            <CheckBox x:Name="chb_MP3" Content=".mp3" IsChecked="{Binding CheckBox_MP3}"/>
+            <CheckBox x:Name="chb_WAV" Content=".wav" IsChecked="{Binding CheckBox_WAV}"/>
+            <CheckBox x:Name="chb_MP4" Content=".mp4" IsChecked="{Binding CheckBox_MP4}"/>
+
+        </StackPanel>
+        <StackPanel Grid.Row="4"  Grid.Column="2">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="chb_AVI" Content=".avi" IsChecked="{Binding CheckBox_AVI}" Margin="0,0,100,0"/>
+                <CheckBox x:Name="chb_All" Content="Alle Formate" IsChecked="{Binding CheckBox_All}"/>
+            </StackPanel>
+            <CheckBox x:Name="chb_MOV" Content=".mov" IsChecked="{Binding CheckBox_MOV}"/>
+            <CheckBox x:Name="chb_MKV" Content=".mkv" IsChecked="{Binding CheckBox_MKV}"/>
+            <CheckBox x:Name="chb_WMV" Content=".wmv" IsChecked="{Binding CheckBox_WMV}"/>
+            <CheckBox x:Name="chb_RAR" Content=".rar" IsChecked="{Binding CheckBox_RAR}"/>
+            <CheckBox x:Name="chb_XML" Content=".xml" IsChecked="{Binding CheckBox_XML}"/>
+            <CheckBox x:Name="chb_JSON" Content=".json" IsChecked="{Binding CheckBox_JSON}"/>
+        </StackPanel>
+
+        <!-->Unten: Laden, Speichern, Sortiervorgang starten-->
+        <Button x:Name ="btn_Load" Margin="10"   Grid.Row="5" Grid.Column="0"  Content="Profil Laden" Command="{Binding LoadDataCommand}"          />
+        <Button x:Name="btn_Save" Margin="10"   Grid.Row="5" Grid.Column="1"    Content="Profil Speichern" Command="{Binding SaveDataCommand}"      />
+        <Button x:Name ="btn_Start" Margin="10"   Grid.Row="5" Grid.Column="2"  Content="Sortiervorgang starten" Command="{Binding StartSortingServiceCommand}" />
     </Grid>
 </Window>

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Dateien_Sortierprogramm.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,24 +11,24 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Xml.Resolvers;
-using Dateien_Sortierprogramm.Data;
-using Dateien_Sortierprogramm.ViewModels;
 
-namespace Dateien_Sortierprogramm
+namespace Dateien_Sortierprogramm.UIs
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaktionslogik für LogView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class LogView : Window
     {
-        public MainWindow()
+        public LogView(MainWindowViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
 
-       
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
