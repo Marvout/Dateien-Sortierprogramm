@@ -49,9 +49,6 @@ namespace Dateien_Sortierprogramm.Services
                     }
                 }
 
-                //Doppelte Dateien löschen. Mit Bestätigung, als Schutz vor falschem Löschen.
-                // DeleteEqualFiles(ref allFileNames, "(1)");
-
                 //In jedem Quellordner nach Dateien mit Schlüsselwörtern suchen und dann in TargetPathFolder verschieben
                 for (int i = 0; i < vm.lstOrderElements.Count; i++)
                 {
@@ -66,15 +63,14 @@ namespace Dateien_Sortierprogramm.Services
                         {
                             _countSortedFiles++;
                             string errorMessage = "";
-                            //Wenn Download Order durchsucht wird, dann ist es häufig so, dass Dateien
-                            //umbenannt werden müssen, da sie noch nichtssagend sind, zb von Bank etc.
-                            if (sourceFolder.FolderPath.ToLower().Contains(("Downloads").ToLower()))
-                            {
+                          //Dateien mit letztem Änderungsdatum versehen
+                          //Regex Ausdruck verwenden, um zu prüfen ob Dateiformat vorliegt ? 
+                            
                                 string fileRenamed = filenameshort.LastWriteTime.ToString("yyyy_MM_dd") + "_" + filenameshort;
                                 if (!Directory.Exists(targetpath + fileRenamed))
                                     errorMessage += ("Der neue Dateipfad mit Umbenennung der Datei ist fehlerhaft." +
                                         "\nZielordnerpfad + Umbenannte Datei: " + targetpath + fileRenamed);
-                            }
+                            
                             try
                             {
                                 File.Move(filename, targetpath + filenameshort.Name);
@@ -103,16 +99,17 @@ namespace Dateien_Sortierprogramm.Services
                     }
                 }
             }
+
             if (_countSortedFiles == 0)
             {
 
-                MessageBox.Show("Derzeit keine Dateien zum Sortieren. " +
-                    "\n\nHinweise: " +
-                    "\n\nMöglicherweise haben Sie noch keine Quellordner hinzugefügt." +
-                    "\n\nMöglicherweise wurden noch keine Dateiformate oder noch nicht die passenden Formate ausgewählt." +
-                    "\n\nGegebenfalls sind Dateien vorhanden, aber noch kein Suchbegriff der in den Dateinamen vorkommt. Fügen " +
-                    "Sie dann einfach weitere Suchbegriffe, die in dem Dateinamen stecken, mit Zielordnern hinzu. Starten Sie " +
-                    "den Suchvorgang anschließend erneut.");
+                MessageBox.Show("Derzeit keine Dateien zum Sortieren. ");
+                    //"\n\nHinweise: " +
+                    //"\n\nMöglicherweise haben Sie noch keine Quellordner hinzugefügt." +
+                    //"\n\nMöglicherweise wurden noch keine Dateiformate oder noch nicht die passenden Formate ausgewählt." +
+                    //"\n\nGegebenfalls sind Dateien vorhanden, aber noch kein Suchbegriff der in den Dateinamen vorkommt. Fügen " +
+                    //"Sie dann einfach weitere Suchbegriffe, die in dem Dateinamen stecken, mit Zielordnern hinzu. Starten Sie " +
+                    //"den Suchvorgang anschließend erneut.");
                 return null;
             }
             return logInfos;

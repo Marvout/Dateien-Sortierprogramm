@@ -22,6 +22,19 @@ namespace Dateien_Sortierprogramm.ViewModels
         //TODO: Reihenfolge Anpassbar für OrderElements DataGrid, da sich dadurch vlt die Sortierreihenfolge ergibt?
 
         //Zu speichernde Daten
+        private string _sortingFilePath = "";
+        public string SortingFilePath
+        {
+            get => _sortingFilePath;
+            set
+            {
+                if (_sortingFilePath != value)
+                {
+                    _sortingFilePath = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
         public ObservableCollection<Folder> lstSourceFolders { get; set; } = new ObservableCollection<Folder>();
         public ObservableCollection<OrderElements> lstOrderElements { get; set; } = new ObservableCollection<OrderElements>();
 
@@ -44,6 +57,10 @@ namespace Dateien_Sortierprogramm.ViewModels
         public ICommand SelectSourceFolderCommand { get; set; }
         [XmlIgnore]
         public ICommand SelectTargetFolderCommand { get; set; }
+
+        [XmlIgnore]
+        public ICommand SelectSortingFilePathCommand { get; set; }
+
         [XmlIgnore]
         public ICommand CreateOrderElementCommand { get; set; }
         [XmlIgnore]
@@ -123,6 +140,10 @@ namespace Dateien_Sortierprogramm.ViewModels
             {
                 DeleteDataGridRowOrderElements();
             });
+            this.SelectSortingFilePathCommand = new DelegateCommand((o) =>
+            {
+                SelectSortingFilePath();
+            });
         }
 
 
@@ -196,7 +217,23 @@ namespace Dateien_Sortierprogramm.ViewModels
                 string selectedPath = dialog.FileName;
                 if (!string.IsNullOrEmpty(selectedPath))
                 {
-                    lstSourceFolders.Add(new Folder() { FolderPath = selectedPath + "\\" });
+                    lstSourceFolders.Add(new Folder() { FolderPath = selectedPath + @"\" });
+                }
+
+            }
+        }
+
+        private void SelectSortingFilePath()
+        {
+            var dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;
+            CommonFileDialogResult result = dialog.ShowDialog();
+            if (result == CommonFileDialogResult.Ok)
+            {
+                string selectedPath = dialog.FileName;
+                if (!string.IsNullOrEmpty(selectedPath))
+                {
+                    SortingFilePath = selectedPath + @"\";
                 }
 
             }
@@ -232,7 +269,6 @@ namespace Dateien_Sortierprogramm.ViewModels
             TargetFolderUI = string.Empty;
         }
 
-
         private void SaveData()
         {
             XmlFileService.CreateXmlFile(this);
@@ -258,6 +294,8 @@ namespace Dateien_Sortierprogramm.ViewModels
             {
                 this.lstSourceFolders.Add(orderelements);
             }
+            this.SortingFilePath = string.Empty;
+            this.SortingFilePath = vm.SortingFilePath ?? string.Empty;
 
             //Checkboxen Status laden
             #region Checkboxen Laden
@@ -305,7 +343,7 @@ namespace Dateien_Sortierprogramm.ViewModels
                 }
                 LogView logView = new LogView(this);
                 logView.Show();
-                MessageBox.Show("Dateien wurden erfolgreich einsortiert. Im Protkollfenster, wird angezeigt, welche Datei von wo nach wo verschoben wurde.");
+                //MessageBox.Show("Dateien wurden erfolgreich einsortiert. Im Protkollfenster, wird angezeigt, welche Datei von wo nach wo verschoben wurde.");
             }
         }
 

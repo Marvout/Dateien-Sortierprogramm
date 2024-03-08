@@ -42,6 +42,7 @@
             <Setter Property="Height" Value="Auto"/>
         </Style>
     </Window.Resources>
+    
     <Grid>
         <!--GridDefinition-->
         <Grid.ColumnDefinitions>
@@ -56,9 +57,11 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
         <!--DataGrid oben: Ordner in denen gesucht werden soll-->
+       
         <DataGrid Margin="5" Grid.ColumnSpan="3" SelectedItem="{Binding SelectedItemFolder}" x:Name="dglstSourceFolders" ItemsSource="{Binding lstSourceFolders}" AutoGenerateColumns="False"  Focusable="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="*" Binding="{Binding FolderPath}">
@@ -196,9 +199,16 @@
             <CheckBox x:Name="chb_JSON" Content=".json" IsChecked="{Binding CheckBox_JSON}"/>
         </StackPanel>
 
+        <!--Pfad für das Laden der Sortiertdatei, wichtig, damit das dann als Service laufen kann-->
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="5,20,0,20">
+            <TextBlock Text="Pfad für das Laden der Sortierdatei:" Margin="0,0,5,0"/>
+            <TextBox  Width="200" Height="20" Text="{Binding SortingFilePath, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="..." Command="{Binding SelectSortingFilePathCommand}" Width="30" Height="20" Margin="5,0,0,0"  />
+        </StackPanel>
+
         <!-->Unten: Laden, Speichern, Sortiervorgang starten-->
-        <Button x:Name ="btn_Load" Margin="10"   Grid.Row="5" Grid.Column="0"  Content="Profil Laden" Command="{Binding LoadDataCommand}"          />
-        <Button x:Name="btn_Save" Margin="10"   Grid.Row="5" Grid.Column="1"    Content="Profil Speichern" Command="{Binding SaveDataCommand}"      />
-        <Button x:Name ="btn_Start" Margin="10"   Grid.Row="5" Grid.Column="2"  Content="Sortiervorgang starten" Command="{Binding StartSortingServiceCommand}" />
+        <Button x:Name ="btn_Load" Margin="10"   Grid.Row="6" Grid.Column="0"  Content="Profil Laden" Command="{Binding LoadDataCommand}"          />
+        <Button x:Name="btn_Save" Margin="10"   Grid.Row="6" Grid.Column="1"    Content="Profil Speichern" Command="{Binding SaveDataCommand}"      />
+        <Button x:Name ="btn_Start" Margin="10"   Grid.Row="6" Grid.Column="2"  Content="Sortiervorgang starten" Command="{Binding StartSortingServiceCommand}" />
     </Grid>
 </Window>
