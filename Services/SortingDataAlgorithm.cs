@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -15,10 +16,9 @@ namespace Dateien_Sortierprogramm.Services
     {
         public IEnumerable<LogInfos> StartSortingcService(MainWindowViewModel vm, List<string> fileformats)
         {
-            //Zählt mit, wie viele Dateien sortiert wurden. Wenn diese Zahl null ist, wird zurückgegeben, dass es derzeit keine
-            //zu sortierenden Dateien gibt.
             int _countSortedFiles = 0;
-            List<LogInfos> logInfos = new List<LogInfos>();
+            List<LogInfos> _logInfos = new List<LogInfos>();
+            List<string> allFilesFoundToSort = new List<string>();
 
             if (vm == null)
             {
@@ -26,139 +26,106 @@ namespace Dateien_Sortierprogramm.Services
                 return null;
             }
 
-
             //Alle Dateien mit zu suchenden Dateiformaten 
-            foreach (Folder sourceFolder in vm.lstSourceFolders)
+
+            //Überprüfen, ob Quellordner korrekt sind
+            var invalidSourceFolders = vm.lstSourceFolders
+                .Where(folder => !Directory.Exists(folder.FolderPath))
+                .ToList();
+
+            // Wenn ungültige Quellordner gefunden wurden, eine Meldung anzeigen
+            if (invalidSourceFolders.Any())
             {
-                if (!Directory.Exists(sourceFolder.FolderPath))
-                {
-                    MessageBox.Show("Der Dateipfad des Quellordners " + sourceFolder.FolderPath +
-                        "ist entweder veraltet oder nicht richtig.");
-                }
-                List<string> allFileNames = new List<string>();
+                var message = string.Join(Environment.NewLine, invalidSourceFolders.Select(folder => folder.FolderPath));
+                MessageBox.Show("Die folgenden Quellordner sind ungültig:" + Environment.NewLine + message);
+                return null;
+            }
 
-                //Auflistung aller Dateien mit gesuchten Dateiformaten in gewählten Quellordner
-                for (int i = 0; i < fileformats.Count(); i++)
-                {
-                    string fileformat = fileformats[i];
-                    string[] filenames = Directory.GetFiles(sourceFolder.FolderPath, "*" + fileformat);
+            allFilesFoundToSort = vm.lstSourceFolders
+                .SelectMany(folder => Directory.GetFiles(folder.FolderPath, "*.*", SearchOption.TopDirectoryOnly))
+                .Where(file => fileformats.Any(fileformat => file.EndsWith(fileformat)))
+                .ToList();
 
-                    foreach (string filename in filenames)
+
+
+            if (allFilesFoundToSort.Count() == 0)
+            {
+                MessageBox.Show("Keine Dateien zum Sortieren gefunden." +
+                    "\n\nHinweise: " +
+                    "\n\n-Möglicherweise sind grade keine Dateien in den Quellordnern vorhanden." +
+                    "\n\n-Möglicherweise haben Sie noch keine Quellordner hinzugefügt." +
+                    "\n\n-Möglicherweise wurden noch keine Dateiformate oder noch nicht die passenden Formate ausgewählt." +
+                    "\n\n-Gegebenfalls sind Dateien vorhanden, aber noch kein Suchbegriff der in den Dateinamen vorkommt. Fügen " +
+                    "Sie dann einfach weitere Suchbegriffe, die in dem Dateinamen stecken, mit Zielordnern hinzu. " +
+                    "\n\n-Starten Sie den Suchvorgang anschließend erneut.");
+                return null;
+            }
+
+            //In jedem Quellordner nach Dateien mit Schlüsselwörtern suchen und dann in TargetPathFolder verschieben
+            //Wo?
+            //Was?
+            foreach (var lstOrderElement in vm.lstOrderElements)
+            {
+                //Für Welche Datei?
+                foreach (string file in allFilesFoundToSort)
+                {
+                    FileInfo fileInfo = new FileInfo(file);
+                    string filename = "";
+
+                    if (fileInfo.Name.Contains(lstOrderElement.SearchTerm))
                     {
-                        allFileNames.Add(filename);
-                    }
-                }
+                        string errorMessage = "";
 
-                //In jedem Quellordner nach Dateien mit Schlüsselwörtern suchen und dann in TargetPathFolder verschieben
-                for (int i = 0; i < vm.lstOrderElements.Count; i++)
-                {
-                    string targetterm = vm.lstOrderElements[i].SearchTerm;
-                    string targetpath = vm.lstOrderElements[i].TargetFolderPath;
-                    //Schleife für fileEntries (Anzahl an Dateien in Liste)
-                    foreach (string filename in allFileNames)
-                    {
-                        FileInfo filenameshort = new FileInfo(filename);
-                        //Wenn Dateiname ein Schlüsselwort enthält, dann wird es in den Ordner verschoben
-                        if (filenameshort.Name.ToLower().Contains(targetterm.ToLower()))
+                        //Datum hinzufügen wenn Datei noch keines hat
+                        string pattern = @"(\d{4}(_|-)\d{2}(_|-)\d{2}(_|-)).*";
+                        Regex regex = new Regex(pattern);
+                        if (!regex.IsMatch(file))
                         {
+                            filename = fileInfo.LastWriteTime.ToString("yyyy_MM_dd") + "_" + fileInfo.Name;
+                            //Muss geprüft werden ob die Umbenennung mit Pfad funktioniert, sonst wird eine Exception spätter geworfen
+                            if (!Directory.Exists(lstOrderElement.TargetFolderPath + filename))
+                                errorMessage += ("Umbenennung der Datei hat zu Fehler geführt." +
+                                    "\nZielordnerpfad + Umbenannte Datei: \n" + lstOrderElement.TargetFolderPath + filename);
+                        }
+
+                        //TODO:
+                        //Wenn eine identische Datei im Zielordner schon vorhanden ist, nachfrage
+
+                        try
+                        {
+                            File.Move(file, lstOrderElement.TargetFolderPath + filename);
+                            _logInfos.Add(new LogInfos()
+                            {
+                                File = filename,
+                                FromFolder = fileInfo.DirectoryName,
+                                ToFolder = lstOrderElement.TargetFolderPath
+                            });
                             _countSortedFiles++;
-                            string errorMessage = "";
-                          //Dateien mit letztem Änderungsdatum versehen
-                          //Regex Ausdruck verwenden, um zu prüfen ob Dateiformat vorliegt ? 
-                            
-                                string fileRenamed = filenameshort.LastWriteTime.ToString("yyyy_MM_dd") + "_" + filenameshort;
-                                if (!Directory.Exists(targetpath + fileRenamed))
-                                    errorMessage += ("Der neue Dateipfad mit Umbenennung der Datei ist fehlerhaft." +
-                                        "\nZielordnerpfad + Umbenannte Datei: " + targetpath + fileRenamed);
-                            
-                            try
+                        }
+                        catch (Exception ex)
+                        {
+                            if (!Directory.Exists(lstOrderElement.TargetFolderPath))
                             {
-                                File.Move(filename, targetpath + filenameshort.Name);
-                                logInfos.Add(new LogInfos()
-                                {
-                                    File = filenameshort.Name,
-                                    FromFolder = sourceFolder.FolderPath,
-                                    ToFolder = targetpath
-                                });
-                                //MessageBox.Show("Datei: " + filenameshort.Name + "\n"+
-                                //    "Von Ordner: " + sourceFolder.FolderPath + "\n"+
-                                //    "Nach Ordner: " + targetpath);
+                                errorMessage += "Der Zielordnerpfad " + lstOrderElement.TargetFolderPath + "ist entweder veraltet, es ist keine Verbindung damit hergestellt (Netzwerk) oder er ist nicht richtig.\n\n";
                             }
-                            catch
+                            else
                             {
-
-                                if (!Directory.Exists(filename))
-                                    errorMessage += "Es scheint etwas nicht mit dem Dateinamen zu stimmen.\n" +
-                                        "Dateiname: " + filename + "\n\n";
-                                if (!Directory.Exists(targetpath))
-                                    errorMessage += "Der Zielordnerpfad " + targetpath + "ist entweder veraltet, es ist keine Verbindung damit hergestellt (Netzwerk) oder er ist nicht richtig.\n\n";
-
-                                MessageBox.Show(errorMessage);
+                                errorMessage = ex.Message;
                             }
+                            MessageBox.Show(errorMessage);
                         }
                     }
                 }
             }
 
-            if (_countSortedFiles == 0)
+            if (_countSortedFiles < allFilesFoundToSort.Count())
             {
-
-                MessageBox.Show("Derzeit keine Dateien zum Sortieren. ");
-                    //"\n\nHinweise: " +
-                    //"\n\nMöglicherweise haben Sie noch keine Quellordner hinzugefügt." +
-                    //"\n\nMöglicherweise wurden noch keine Dateiformate oder noch nicht die passenden Formate ausgewählt." +
-                    //"\n\nGegebenfalls sind Dateien vorhanden, aber noch kein Suchbegriff der in den Dateinamen vorkommt. Fügen " +
-                    //"Sie dann einfach weitere Suchbegriffe, die in dem Dateinamen stecken, mit Zielordnern hinzu. Starten Sie " +
-                    //"den Suchvorgang anschließend erneut.");
-                return null;
+                MessageBox.Show("Mehrere Dateien aus den angegebenen Quellordnern sind noch nicht einsortiert worden, da es noch keinen passenden Suchbegriff gibt");
             }
-            return logInfos;
+            return _logInfos;
         }
 
-
-        //TODO: Hard coded strings wie "Kontoauszug" Nicht im Code belassen, sondern Nutzereingaben ermöglichen
-        
-        //private static string SortingDownloadFiles(FileInfo filename)
-        //{
-        //    string oldFilename = filename.Name;
-        //    string newFilename = "";
-        //    if (oldFilename.ToLower().Contains(("Kontoauszug").ToLower()))
-        //        newFilename = DateTime.Now.ToString("yyyy_MM_dd") + "_" + oldFilename;
-        //    else if (oldFilename.ToLower().Contains(("Umsatzanzeige").ToLower()))
-        //        newFilename = filename.LastWriteTime.ToString("yyyy_MM_dd") + "_" + "ING_Girokonto_Umsatz" + ".csv";
-        //    else if (oldFilename.ToLower().Contains(("Direkt_Depot").ToLower()))
-        //        newFilename = filename.LastWriteTime.ToString("yyyy_MM_dd") + "_" + oldFilename;
-        //    else if (oldFilename.ToLower().Contains(("Anleitung").ToLower()))
-        //        newFilename = oldFilename;
-        //    if (oldFilename.ToLower().Contains(("KfW_Kontoauszug").ToLower()))
-        //        newFilename = DateTime.Now.AddMonths(-1).ToString("yyyy_MM") + "_" + "KFW_Kontoauszug";
-        //    else
-        //        newFilename = filename.LastWriteTime.ToString("yyyy_MM_dd") + "_" + oldFilename;
-        //    return newFilename;
-        //}
-
-        //private static void DeleteEqualFiles(ref List<string> listToClean, string searchString)
-        //{
-        //    foreach (string file in listToClean)
-        //    {
-        //        //TODO: Es kann auch ein Datum sein, und dann wird der Hinweis ausgelöst, obwohl es keine doppelte Datei ist
-        //        if (file.Contains("(1)"))
-        //        {
-        //            MessageBoxResult dialogResult = MessageBox.Show(" Da es sich um eine doppelte Datei handeln könnte: Soll die Datei: " + file + " gelöscht werden?", "Bestätigung", MessageBoxButton.YesNo, MessageBoxImage.Question);
-        //            if (dialogResult == MessageBoxResult.Yes)
-        //            {
-        //                File.Delete(file);
-        //            }
-        //            else if (dialogResult == MessageBoxResult.No)
-        //            {
-        //                MessageBox.Show("Bitte Datei umbenenen, damit die Datei einsortiert werden kann. Dann den Startvorgang bitte wiederholen.");
-        //            }
-        //        }
-        //    }
-
-        //    listToClean.RemoveAll(item => item.Contains(searchString));
-        //}
-
+        //TODO: Diese Methode einbinden
         public static MainWindowViewModel ChangeAllYearRelevantDirectionsToCurrentYear(MainWindowViewModel vm)
         {
             string _currentYear = Convert.ToString(DateTime.Now.Year);

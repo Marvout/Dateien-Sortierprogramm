@@ -334,8 +334,9 @@ namespace Dateien_Sortierprogramm.ViewModels
             //    lstLogInfo.Add(logInfo);
             //}
             SortingDataAlgorithm sortingDataAlgorithm = new SortingDataAlgorithm();
-            IEnumerable<LogInfos> logInfos = sortingDataAlgorithm.StartSortingcService(this, lstFileFormats);
-            if (logInfos != null)
+            IEnumerable<LogInfos> logInfos = null;
+            logInfos = sortingDataAlgorithm.StartSortingcService(this, lstFileFormats);
+            if (logInfos != null && logInfos.Count() != 0)
             {
                 foreach (var logInfo in logInfos)
                 {
@@ -343,7 +344,6 @@ namespace Dateien_Sortierprogramm.ViewModels
                 }
                 LogView logView = new LogView(this);
                 logView.Show();
-                //MessageBox.Show("Dateien wurden erfolgreich einsortiert. Im Protkollfenster, wird angezeigt, welche Datei von wo nach wo verschoben wurde.");
             }
         }
 
