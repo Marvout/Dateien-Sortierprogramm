@@ -12,12 +12,12 @@ using System.Windows;
 
 namespace Dateien_Sortierprogramm.Services
 {
-    public class SortingDataAlgorithm
+    public static class SortingDataAlgorithm
     {
-        public IEnumerable<LogInfos> StartSortingcService(MainWindowViewModel vm, List<string> fileformats)
+        public static List<SortingLogInfos> StartSortingcService(MainWindowViewModel vm, List<string> fileformats)
         {
             int _countSortedFiles = 0;
-            List<LogInfos> _logInfos = new List<LogInfos>();
+            List<SortingLogInfos> _sortingLogInfos = new List<SortingLogInfos>();
             List<string> allFilesFoundToSort = new List<string>();
 
             if (vm == null)
@@ -70,7 +70,7 @@ namespace Dateien_Sortierprogramm.Services
                 foreach (string file in allFilesFoundToSort)
                 {
                     FileInfo fileInfo = new FileInfo(file);
-                    string filename = "";
+                    string filename = fileInfo.Name;
 
                     if (fileInfo.Name.Contains(lstOrderElement.SearchTerm))
                     {
@@ -94,7 +94,7 @@ namespace Dateien_Sortierprogramm.Services
                         try
                         {
                             File.Move(file, lstOrderElement.TargetFolderPath + filename);
-                            _logInfos.Add(new LogInfos()
+                            _sortingLogInfos.Add(new SortingLogInfos()
                             {
                                 File = filename,
                                 FromFolder = fileInfo.DirectoryName,
@@ -122,7 +122,7 @@ namespace Dateien_Sortierprogramm.Services
             {
                 MessageBox.Show("Mehrere Dateien aus den angegebenen Quellordnern sind noch nicht einsortiert worden, da es noch keinen passenden Suchbegriff gibt");
             }
-            return _logInfos;
+            return _sortingLogInfos;
         }
 
         //TODO: Diese Methode einbinden
