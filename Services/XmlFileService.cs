@@ -83,5 +83,28 @@ namespace Dateien_Sortierprogramm.Services
             }
             return sortingInformationData;
         }
+        public static (SortingInformation, string loggingInformation) LoadXmlFileForService(string fileName)
+        {
+            SortingInformation sortingInformationData = new SortingInformation();
+            string loggingInformation = "";
+
+
+            //Laden der Inhalte der Datei in Objekt
+            try
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(SortingInformation));
+                using (Stream s = File.OpenRead(fileName))
+                {
+                    sortingInformationData = ser.Deserialize(s) as SortingInformation;
+                }
+            }
+            catch (Exception e)
+            {
+                loggingInformation += "\n" + e.Message;
+            }
+
+            return (sortingInformationData, loggingInformation);
+        }
+
     }
 }

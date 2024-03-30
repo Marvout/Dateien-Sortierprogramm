@@ -14,16 +14,17 @@ namespace Dateien_Sortierprogramm.Services
 {
     public static class SortingDataAlgorithm
     {
-        public static List<SortingLogInfos> StartSortingcService(MainWindowViewModel vm, List<string> fileformats)
+        public static (List<SortingLogInfos>, string loggingInformation) StartSortingcService(MainWindowViewModel vm, List<string> fileformats)
         {
+            string loggingInformation = "";
             int _countSortedFiles = 0;
-            List<SortingLogInfos> _sortingLogInfos = new List<SortingLogInfos>();
+            List<SortingLogInfos> _successfullSortedItemsLog = new List<SortingLogInfos>();
             List<string> allFilesFoundToSort = new List<string>();
 
             if (vm == null)
             {
-                MessageBox.Show("Bitte eine Datei in den Zwischenspeicher Laden.");
-                return null;
+                loggingInformation += "\nBitte eine Datei in den Zwischenspeicher Laden.";
+                return (null, loggingInformation);
             }
 
             //Alle Dateien mit zu suchenden Dateiformaten 
@@ -37,8 +38,8 @@ namespace Dateien_Sortierprogramm.Services
             if (invalidSourceFolders.Any())
             {
                 var message = string.Join(Environment.NewLine, invalidSourceFolders.Select(folder => folder.FolderPath));
-                MessageBox.Show("Die folgenden Quellordner sind ungültig:" + Environment.NewLine + message);
-                return null;
+                loggingInformation += "\nDie folgenden Quellordner sind ungültig:" + Environment.NewLine + message;
+                return (null, loggingInformation);
             }
 
             allFilesFoundToSort = vm.lstSourceFolders
@@ -50,15 +51,8 @@ namespace Dateien_Sortierprogramm.Services
 
             if (allFilesFoundToSort.Count() == 0)
             {
-                MessageBox.Show("Keine Dateien zum Sortieren gefunden." +
-                    "\n\nHinweise: " +
-                    "\n\n-Möglicherweise sind grade keine Dateien in den Quellordnern vorhanden." +
-                    "\n\n-Möglicherweise haben Sie noch keine Quellordner hinzugefügt." +
-                    "\n\n-Möglicherweise wurden noch keine Dateiformate oder noch nicht die passenden Formate ausgewählt." +
-                    "\n\n-Gegebenfalls sind Dateien vorhanden, aber noch kein Suchbegriff der in den Dateinamen vorkommt. Fügen " +
-                    "Sie dann einfach weitere Suchbegriffe, die in dem Dateinamen stecken, mit Zielordnern hinzu. " +
-                    "\n\n-Starten Sie den Suchvorgang anschließend erneut.");
-                return null;
+                loggingInformation += "\nDerzeit keine Dateien zum Sortieren vorhanden.";
+                return (null, loggingInformation);
             }
 
             //In jedem Quellordner nach Dateien mit Schlüsselwörtern suchen und dann in TargetPathFolder verschieben
@@ -74,7 +68,6 @@ namespace Dateien_Sortierprogramm.Services
 
                     if (fileInfo.Name.Contains(lstOrderElement.SearchTerm))
                     {
-                        string errorMessage = "";
 
                         //Datum hinzufügen wenn Datei noch keines hat
                         string pattern = @"(\d{4}(_|-)\d{2}(_|-)\d{2}(_|-)).*";
@@ -84,7 +77,7 @@ namespace Dateien_Sortierprogramm.Services
                             filename = fileInfo.LastWriteTime.ToString("yyyy_MM_dd") + "_" + fileInfo.Name;
                             //Muss geprüft werden ob die Umbenennung mit Pfad funktioniert, sonst wird eine Exception spätter geworfen
                             if (!Directory.Exists(lstOrderElement.TargetFolderPath + filename))
-                                errorMessage += ("Umbenennung der Datei hat zu Fehler geführt." +
+                                loggingInformation += ("\nUmbenennung der Datei hat zu Fehler geführt." +
                                     "\nZielordnerpfad + Umbenannte Datei: \n" + lstOrderElement.TargetFolderPath + filename);
                         }
 
@@ -94,7 +87,7 @@ namespace Dateien_Sortierprogramm.Services
                         try
                         {
                             File.Move(file, lstOrderElement.TargetFolderPath + filename);
-                            _sortingLogInfos.Add(new SortingLogInfos()
+                            _successfullSortedItemsLog.Add(new SortingLogInfos()
                             {
                                 File = filename,
                                 FromFolder = fileInfo.DirectoryName,
@@ -104,15 +97,8 @@ namespace Dateien_Sortierprogramm.Services
                         }
                         catch (Exception ex)
                         {
-                            if (!Directory.Exists(lstOrderElement.TargetFolderPath))
-                            {
-                                errorMessage += "Der Zielordnerpfad " + lstOrderElement.TargetFolderPath + "ist entweder veraltet, es ist keine Verbindung damit hergestellt (Netzwerk) oder er ist nicht richtig.\n\n";
-                            }
-                            else
-                            {
-                                errorMessage = ex.Message;
-                            }
-                            MessageBox.Show(errorMessage);
+                            loggingInformation = $"\n File: {file} \t TargetFolderPath: {lstOrderElement.TargetFolderPath} \t SearchTerm: {lstOrderElement.SearchTerm} ";
+                            loggingInformation = "\nErrorMessage: ex.Message";
                         }
                     }
                 }
@@ -120,9 +106,9 @@ namespace Dateien_Sortierprogramm.Services
 
             if (_countSortedFiles < allFilesFoundToSort.Count())
             {
-                MessageBox.Show("Mehrere Dateien aus den angegebenen Quellordnern sind noch nicht einsortiert worden, da es noch keinen passenden Suchbegriff gibt");
+               loggingInformation += "\nMehrere Dateien aus den angegebenen Quellordnern sind noch nicht einsortiert worden, da es noch keinen passenden Suchbegriff gibt";
             }
-            return _sortingLogInfos;
+            return (_successfullSortedItemsLog, loggingInformation);
         }
 
         //TODO: Diese Methode einbinden

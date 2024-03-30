@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 using System.Windows.Controls;
 using System.Runtime.CompilerServices;
 using Dateien_Sortierprogramm.UIs;
+using System.Printing;
 
 namespace Dateien_Sortierprogramm.ViewModels
 {
@@ -335,11 +336,43 @@ namespace Dateien_Sortierprogramm.ViewModels
             //vm = SortingAlgorithm.ChangeAllYearRelevantDirectionsToCurrentYear(xmlDataCollector);
         }
 
+        public string LoadDataConsoleService(string filepath)
+        {
+            string loggingIformation = "";
+            (SortingInformation sortingInformationData,loggingIformation) = XmlFileService.LoadXmlFileForService(filepath);
+            if (sortingInformationData == null)
+            {
+                loggingIformation = "Datei enthält keine Daten oder falsche Datei wurde ausgewählt.";
+                return loggingIformation;
+            }
+            //Elemente in ViewModel laden. Dazu muss, wenn noch Elemente in den ObservableCollections, die Objekte leer sein
+            //Dann wird über eine foreach-Schleife das Objekt wieder befüllt.
+            this.lstOrderElements.Clear(); //Vorherige Elemente entfernen
+            foreach (var orderelement in sortingInformationData.LstOrderElements)
+            {
+                this.lstOrderElements.Add(orderelement);
+            }
+            this.lstSourceFolders.Clear();
+            foreach (var orderelements in sortingInformationData.LstSourceFolders)
+            {
+                this.lstSourceFolders.Add(orderelements);
+            }
+            //this.SortingFilePath = string.Empty;
+            //this.SortingFilePath = vm.SortingFilePath ?? string.Empty;
+
+
+            //TODO: Auf Jahreszahlen prüfen
+            //Prüfen ob Zielordnerpfade mit Jahresangabe für neues Jahr geupdated sollen, grade beim Steuerordner
+            //vm = SortingAlgorithm.ChangeAllYearRelevantDirectionsToCurrentYear(xmlDataCollector);
+            return loggingIformation="Laden erfolgreich";
+        }
+
+
         private void StartSorting()
         {
             List<SortingLogInfos> logInfos = new List<SortingLogInfos>();
             LstLogInfos.Clear();
-            logInfos = SortingDataAlgorithm.StartSortingcService(this, lstFileFormats);
+            logInfos = SortingDataAlgorithm.StartSortingcService(this, lstFileFormats).Item1;
             if (logInfos != null && logInfos.Count() != 0)
             {
                 foreach (var logInfo in logInfos)
@@ -349,6 +382,14 @@ namespace Dateien_Sortierprogramm.ViewModels
                 LogView logView = new LogView(this);
                 logView.Show();
             }
+        }
+
+        public string StartSortingConsoleService()
+        {
+            List<SortingLogInfos> successfullLogInfos = new List<SortingLogInfos>();
+            string loggingInformation = "";
+            (successfullLogInfos, loggingInformation) = SortingDataAlgorithm.StartSortingcService(this, lstFileFormats);
+            return loggingInformation;
         }
 
         private void DeleteDataGridRowFolder()
