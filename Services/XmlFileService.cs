@@ -97,6 +97,7 @@ namespace Dateien_Sortierprogramm.Services
                 {
                     sortingInformationData = ser.Deserialize(s) as SortingInformation;
                 }
+                loggingInformation = "Datei erfolgreich geladen";
             }
             catch (Exception e)
             {
