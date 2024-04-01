@@ -49,6 +49,29 @@ namespace Dateien_Sortierprogramm.Services
             }
         }
 
+        public static string CreateXmlFile(SortingInformation sortingInformation, string saveFilePath)
+        {
+            string loggingInformation = "";
+            XmlSerializer ser = new XmlSerializer(typeof(SortingInformation));
+            try
+            {
+                if (File.Exists(saveFilePath)) //Prüfen, ob Datei existiert. Dazu muss der Speicherort geprüft werden
+                {
+                    File.Delete(saveFilePath);
+                }
+                using (Stream s = File.OpenWrite(saveFilePath))
+                {
+                    ser.Serialize(s, sortingInformation);
+                }
+                loggingInformation = "XML Datei erfolgreich geupdated";
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            return loggingInformation;
+        }
+
         public static SortingInformation LoadXmlFile()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();

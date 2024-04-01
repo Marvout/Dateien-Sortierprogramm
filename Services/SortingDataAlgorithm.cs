@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
+using System.Printing;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -207,7 +208,7 @@ namespace Dateien_Sortierprogramm.Services
 
             if (_countSortedFiles < allFilesFoundToSort.Count())
             {
-                loggingInformation += "\nMehrere Dateien aus den angegebenen Quellordnern sind noch nicht einsortiert worden, da es noch keinen passenden Suchbegriff gibt";
+                loggingInformation += "Mehrere Dateien aus den angegebenen Quellordnern sind noch nicht einsortiert worden, da es noch keinen passenden Suchbegriff gibt";
             }
             return (_successfullSortedItemsLog, loggingInformation);
         }
@@ -223,38 +224,65 @@ namespace Dateien_Sortierprogramm.Services
             {
                 string loggingInformation = "";
                 string directoryPattern = $"(.*\\\\){_previousYear}\\\\";
-                Regex regex = new Regex(directoryPattern);
-                if (regex.IsMatch(orderElement.TargetFolderPath))
+                try
                 {
-                    loggingInformation += $"Jahreszahl im Pfad \n{orderElement.TargetFolderPath}\n wurde aktualisiert auf dieses Jahr.";
-                    string newpathstring = orderElement.TargetFolderPath.Replace(_previousYear, _currentYear);
-                    if (!Directory.Exists(newpathstring))
+                    Regex regex = new Regex(directoryPattern);
+                    if (regex.IsMatch(orderElement.TargetFolderPath))
                     {
-                        loggingInformation += $"\n Zusätzlich wurde ein neuer Order mit der aktuellen Jahreszahl erstellt, in der zukünftig die passenden Dokumente einsortiert werden.";
-                        string newFolderForCurrentYear = $@"{regex.Match(orderElement.TargetFolderPath).Groups[1].Value}{_currentYear}\";
-                        Directory.CreateDirectory(newFolderForCurrentYear);
+                        loggingInformation += $"Jahreszahl im Pfad \n{orderElement.TargetFolderPath}\n wurde aktualisiert auf dieses Jahr.";
+                        string newpathstring = orderElement.TargetFolderPath.Replace(_previousYear, _currentYear);
+                        if (!Directory.Exists(newpathstring))
+                        {
+                            loggingInformation += $"\n Zusätzlich wurde ein neuer Order mit der aktuellen Jahreszahl erstellt, in der zukünftig die passenden Dokumente einsortiert werden.";
+                            string newFolderForCurrentYear = $@"{regex.Match(orderElement.TargetFolderPath).Groups[1].Value}{_currentYear}\";
+                            Directory.CreateDirectory(newFolderForCurrentYear);
+                        }
+                        orderElement.TargetFolderPath = newpathstring;
+                        MessageBox.Show(loggingInformation);
                     }
-                    orderElement.TargetFolderPath = newpathstring;
-                    MessageBox.Show(loggingInformation);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
                 }
             }
             return vm;
         }
 
-        public static SortingInformation ChangeDirectoryToCurrentYearConsoleService(SortingInformation sortingInformation)
+        public static string ChangeDirectoryToCurrentYearConsoleService(SortingInformation sortingInformation)
         {
             string _currentYear = Convert.ToString(DateTime.Now.Year);
             string _previousYear = Convert.ToString(DateTime.Now.Year - 1);
+            string loggingInformation = "";
 
             foreach (var orderElement in sortingInformation.LstOrderElements)
             {
-                if (orderElement.TargetFolderPath.Contains(_previousYear))
+                string directoryPattern = $"(.*\\\\){_previousYear}\\\\";
+                try
                 {
-                    string newpathstring = orderElement.TargetFolderPath.Replace(_previousYear, _currentYear);
-                    orderElement.TargetFolderPath = newpathstring;
+                    Regex regex = new Regex(directoryPattern);
+                    if (regex.IsMatch(orderElement.TargetFolderPath))
+                    {
+                        loggingInformation += "-------";
+                        loggingInformation += $"\nJahreszahl im Pfad geupdated: \n{orderElement.TargetFolderPath}\n";
+                        string newpathstring = orderElement.TargetFolderPath.Replace(_previousYear, _currentYear);
+                        if (!Directory.Exists(newpathstring))
+                        {
+                            loggingInformation += $"\n Zusätzlich wurde ein neuer Order mit der aktuellen Jahreszahl erstellt, in der zukünftig die passenden Dokumente einsortiert werden.";
+                            string newFolderForCurrentYear = $@"{regex.Match(orderElement.TargetFolderPath).Groups[1].Value}{_currentYear}\";
+                            Directory.CreateDirectory(newFolderForCurrentYear);
+                        }
+                        orderElement.TargetFolderPath = newpathstring;
+                        loggingInformation += "\n-------";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
                 }
             }
-            return sortingInformation;
+            return loggingInformation;
         }
+
     }
 }
