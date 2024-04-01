@@ -3,6 +3,7 @@ using Dateien_Sortierprogramm.ViewModels;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -211,6 +212,7 @@ namespace Dateien_Sortierprogramm.Services
             return (_successfullSortedItemsLog, loggingInformation);
         }
 
+
         //TODO: Diese Methode einbinden
         public static MainWindowViewModel ChangeDirectoryToCurrentYear(MainWindowViewModel vm)
         {
@@ -219,10 +221,21 @@ namespace Dateien_Sortierprogramm.Services
 
             foreach (var orderElement in vm.lstOrderElements)
             {
-                if (orderElement.TargetFolderPath.Contains(_previousYear))
+                string loggingInformation = "";
+                string directoryPattern = $"(.*\\\\){_previousYear}\\\\";
+                Regex regex = new Regex(directoryPattern);
+                if (regex.IsMatch(orderElement.TargetFolderPath))
                 {
+                    loggingInformation += $"Jahreszahl im Pfad \n{orderElement.TargetFolderPath}\n wurde aktualisiert auf dieses Jahr.";
                     string newpathstring = orderElement.TargetFolderPath.Replace(_previousYear, _currentYear);
+                    if (!Directory.Exists(newpathstring))
+                    {
+                        loggingInformation += $"\n Zusätzlich wurde ein neuer Order mit der aktuellen Jahreszahl erstellt, in der zukünftig die passenden Dokumente einsortiert werden.";
+                        string newFolderForCurrentYear = $@"{regex.Match(orderElement.TargetFolderPath).Groups[1].Value}{_currentYear}\";
+                        Directory.CreateDirectory(newFolderForCurrentYear);
+                    }
                     orderElement.TargetFolderPath = newpathstring;
+                    MessageBox.Show(loggingInformation);
                 }
             }
             return vm;

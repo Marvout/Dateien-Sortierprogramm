@@ -17,7 +17,7 @@ using System.Printing;
 
 namespace Dateien_Sortierprogramm.ViewModels
 {
-    
+
     public partial class MainWindowViewModel : NotifyableBaseObject
     {
         //TODO: Reihenfolge Anpassbar für OrderElements DataGrid, da sich dadurch vlt die Sortierreihenfolge ergibt?
@@ -66,6 +66,8 @@ namespace Dateien_Sortierprogramm.ViewModels
         public ICommand CloseLogWindowCommand { get; set; }
         public ICommand DeleteDataGridRowFolderCommand { get; set; }
         public ICommand DeleteDataGridRowOrderElementsCommand { get; set; }
+
+        public ICommand UpdateYearOfPathCommand { get; set; }
         #endregion
 
         //[XmlIgnore]
@@ -76,45 +78,16 @@ namespace Dateien_Sortierprogramm.ViewModels
         //Konstruktor
         public MainWindowViewModel()
         {
-
             //Delegate Initialisierung
-            this.SelectSourceFolderCommand = new DelegateCommand((o) =>
-            {
-                SelectSourceFolder();
-
-            });
-            this.SelectTargetFolderCommand = new DelegateCommand((o) =>
-            {
-                SelectTargetFolder();
-            });
-            this.CreateOrderElementCommand = new DelegateCommand((o) =>
-            {
-                AddingOrderElementsToGrid();
-            });
-            this.SaveDataCommand = new DelegateCommand((o) =>
-            {
-                SaveData();
-            });
-            this.LoadDataCommand = new DelegateCommand((o) =>
-            {
-                LoadData();
-            });
-            this.StartSortingServiceCommand = new DelegateCommand((o) =>
-            {
-                StartSorting();
-            });
-            this.DeleteDataGridRowFolderCommand = new DelegateCommand((o) =>
-            {
-                DeleteDataGridRowFolder();
-            });
-            this.DeleteDataGridRowOrderElementsCommand = new DelegateCommand((o) =>
-            {
-                DeleteDataGridRowOrderElements();
-            });
-            //this.SelectSortingFilePathCommand = new DelegateCommand((o) =>
-            //{
-            //    SelectSortingFilePath();
-            //});
+            this.SelectSourceFolderCommand = new DelegateCommand((o) => SelectSourceFolder());
+            this.SelectTargetFolderCommand = new DelegateCommand((o) => SelectTargetFolder());
+            this.CreateOrderElementCommand = new DelegateCommand((o) => AddingOrderElementsToGrid());
+            this.SaveDataCommand = new DelegateCommand((o) => SaveData());
+            this.LoadDataCommand = new DelegateCommand((o) => LoadData());
+            this.StartSortingServiceCommand = new DelegateCommand((o) => StartSorting());
+            this.DeleteDataGridRowFolderCommand = new DelegateCommand((o) => DeleteDataGridRowFolder());
+            this.DeleteDataGridRowOrderElementsCommand = new DelegateCommand((o) => DeleteDataGridRowOrderElements());
+            this.UpdateYearOfPathCommand = new DelegateCommand((o) => UpdateYearOfPath());
         }
 
 
@@ -342,7 +315,6 @@ namespace Dateien_Sortierprogramm.ViewModels
             }
         }
 
-
         private void DeleteDataGridRowFolder()
         {
             if (null != SelectedItemFolder)
@@ -357,6 +329,11 @@ namespace Dateien_Sortierprogramm.ViewModels
             {
                 lstOrderElements.Remove(SelectedItemOrderElements);
             }
+        }
+
+        private void UpdateYearOfPath()
+        {
+            SortingDataAlgorithm.ChangeDirectoryToCurrentYear(this);
         }
     }
 }

@@ -19,7 +19,7 @@
         <Style TargetType="Button">
             <Setter Property="Height" Value="25"/>
         </Style>
-        <!--Image Basic Style--> 
+        <!--Image Basic Style-->
         <Style TargetType="Image" x:Key="ImageStyle" >
             <Setter Property="Width" Value="20"/>
             <!--<Setter Property="Height" Value="20"/>-->
@@ -42,7 +42,7 @@
             <Setter Property="Height" Value="Auto"/>
         </Style>
     </Window.Resources>
-    
+
     <Grid>
         <!--GridDefinition-->
         <Grid.ColumnDefinitions>
@@ -61,7 +61,7 @@
         </Grid.RowDefinitions>
 
         <!--DataGrid oben: Ordner in denen gesucht werden soll-->
-       
+
         <DataGrid Margin="5" Grid.ColumnSpan="3" SelectedItem="{Binding SelectedItemFolder}" x:Name="dglstSourceFolders" ItemsSource="{Binding lstSourceFolders}" AutoGenerateColumns="False"  Focusable="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Width="*" Binding="{Binding FolderPath}">
@@ -81,7 +81,7 @@
                         </StackPanel>
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-                <DataGridTemplateColumn Width="30"> 
+                <DataGridTemplateColumn Width="30">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Style="{StaticResource DeleteButtonStyle}" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
@@ -146,7 +146,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Label Content="In Quellordner wird nach Suchbegriffen gesucht und in die Zielordner einsortiert" />
-            <DataGrid x:Name="dg_Sorting" Grid.Row="1" SelectedItem="{Binding SelectedItemOrderElements}" ItemsSource="{Binding lstOrderElements}" CanUserAddRows="False" AutoGenerateColumns="False" Focusable="False">
+            <DataGrid x:Name="dg_Sorting" Grid.Row="1" SelectedItem="{Binding SelectedItemOrderElements}" ItemsSource="{Binding lstOrderElements, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" AutoGenerateColumns="False" Focusable="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Suchwort" Width="*" Binding="{Binding SearchTerm}" />
                     <DataGridTextColumn Header="Zielordner" Width="2*" Binding="{Binding TargetFolderPath}"/>
@@ -200,10 +200,11 @@
         </StackPanel>
 
         <!--Pfad für das Laden der Sortiertdatei, wichtig, damit das dann als Service laufen kann-->
-        <StackPanel Grid.Row="5" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="5,20,0,20">
-            <TextBlock Text="Pfad für das Laden der Sortierdatei:" Margin="0,0,5,0"/>
-            <TextBox  Width="200" Height="20" Text="{Binding SortingFilePath, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="..." Command="{Binding SelectSortingFilePathCommand}" Width="30" Height="20" Margin="5,0,0,0"  />
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="10,20,0,20">
+            <TextBlock Text="Pfad für das Laden der Sortierdatei:" Margin="0,0,5,0"  Visibility="Collapsed"/>
+            <TextBox  Width="200" Height="20" Text="{Binding SortingFilePath, UpdateSourceTrigger=PropertyChanged}"  Visibility="Collapsed"/>
+            <Button Content="..." Command="{Binding SelectSortingFilePathCommand}" Width="30" Height="20" Margin="5,0,0,0"  Visibility="Collapsed"  />
+            <Button Content="Update Pfade mit Jahreszahlen" Command="{Binding UpdateYearOfPathCommand}" />
         </StackPanel>
 
         <!-->Unten: Laden, Speichern, Sortiervorgang starten-->
