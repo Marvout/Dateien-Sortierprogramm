@@ -1,6 +1,7 @@
 ﻿using Dateien_Sortierprogramm.Data;
 using Dateien_Sortierprogramm.ViewModels;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -110,7 +111,7 @@ namespace Dateien_Sortierprogramm.Services
 
             if (_countSortedFiles < allFilesFoundToSort.Count())
             {
-               loggingInformation += "Mehrere Dateien aus den angegebenen Quellordnern sind noch nicht einsortiert worden, da es noch keinen passenden Suchbegriff gibt";
+                loggingInformation += "Mehrere Dateien aus den angegebenen Quellordnern sind noch nicht einsortiert worden, da es noch keinen passenden Suchbegriff gibt";
                 MessageBox.Show(loggingInformation);
             }
             return _successfullSortedItemsLog;
@@ -211,29 +212,36 @@ namespace Dateien_Sortierprogramm.Services
         }
 
         //TODO: Diese Methode einbinden
-        public static MainWindowViewModel ChangeAllYearRelevantDirectionsToCurrentYear(MainWindowViewModel vm)
+        public static MainWindowViewModel ChangeDirectoryToCurrentYear(MainWindowViewModel vm)
         {
             string _currentYear = Convert.ToString(DateTime.Now.Year);
             string _previousYear = Convert.ToString(DateTime.Now.Year - 1);
 
-            for (int i = 0; i < vm.lstOrderElements.Count; i++)
+            foreach (var orderElement in vm.lstOrderElements)
             {
-                //TODO: Noch einbauen, dass wenn Ordner nicht aktualisiert werden soll, dass dieser nicht bei jedem
-                //Laden erneut abgefragt wird. 
-                if (vm.lstOrderElements[i].TargetFolderPath.Contains(_previousYear))
+                if (orderElement.TargetFolderPath.Contains(_previousYear))
                 {
-                    MessageBoxResult _messageBoxResult = MessageBox.Show("Soll der Orderpfad: \n" + vm.lstOrderElements[i].TargetFolderPath + "   , " +
-                        "\nin dem das vorherige Jahr " + _previousYear + " Bestandteil" +
-                        " des Pfades ist, geändert werden auf das aktuelle Jahr " + _currentYear + " ?", "Prüfen", MessageBoxButton.YesNo);
-
-                    if (_messageBoxResult == MessageBoxResult.Yes)
-                    {
-                        string newpathstring = vm.lstOrderElements[i].TargetFolderPath.Replace(_previousYear, _currentYear);
-                        vm.lstOrderElements[i].TargetFolderPath = newpathstring;
-                    }
+                    string newpathstring = orderElement.TargetFolderPath.Replace(_previousYear, _currentYear);
+                    orderElement.TargetFolderPath = newpathstring;
                 }
             }
             return vm;
+        }
+
+        public static SortingInformation ChangeDirectoryToCurrentYearConsoleService(SortingInformation sortingInformation)
+        {
+            string _currentYear = Convert.ToString(DateTime.Now.Year);
+            string _previousYear = Convert.ToString(DateTime.Now.Year - 1);
+
+            foreach (var orderElement in sortingInformation.LstOrderElements)
+            {
+                if (orderElement.TargetFolderPath.Contains(_previousYear))
+                {
+                    string newpathstring = orderElement.TargetFolderPath.Replace(_previousYear, _currentYear);
+                    orderElement.TargetFolderPath = newpathstring;
+                }
+            }
+            return sortingInformation;
         }
     }
 }

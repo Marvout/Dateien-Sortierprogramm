@@ -17,7 +17,7 @@ using System.Printing;
 
 namespace Dateien_Sortierprogramm.ViewModels
 {
-    [Serializable]
+    
     public partial class MainWindowViewModel : NotifyableBaseObject
     {
         //TODO: Reihenfolge Anpassbar für OrderElements DataGrid, da sich dadurch vlt die Sortierreihenfolge ergibt?
@@ -54,27 +54,17 @@ namespace Dateien_Sortierprogramm.ViewModels
         //}
         //Daten die nicht gespeichert werden können/müssen
         #region Commands
-        [XmlIgnore]
         public ICommand SelectSourceFolderCommand { get; set; }
-        [XmlIgnore]
         public ICommand SelectTargetFolderCommand { get; set; }
 
-        [XmlIgnore]
         public ICommand SelectSortingFilePathCommand { get; set; }
 
-        [XmlIgnore]
         public ICommand CreateOrderElementCommand { get; set; }
-        [XmlIgnore]
         public ICommand SaveDataCommand { get; set; }
-        [XmlIgnore]
         public ICommand LoadDataCommand { get; set; }
-        [XmlIgnore]
         public ICommand StartSortingServiceCommand { get; set; }
-        [XmlIgnore]
         public ICommand CloseLogWindowCommand { get; set; }
-        [XmlIgnore]
         public ICommand DeleteDataGridRowFolderCommand { get; set; }
-        [XmlIgnore]
         public ICommand DeleteDataGridRowOrderElementsCommand { get; set; }
         #endregion
 
