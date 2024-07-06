@@ -14,7 +14,7 @@
 
     <Window.Resources>
         <Style TargetType="TextBox">
-            <Setter Property="Height" Value="25"/>
+            <Setter Property="Height" Value="30"/>
         </Style>
         <Style TargetType="Button">
             <Setter Property="Height" Value="25"/>
@@ -205,6 +205,7 @@
             <TextBox  Width="200" Height="20" Text="{Binding SortingFilePath, UpdateSourceTrigger=PropertyChanged}"  Visibility="Collapsed"/>
             <Button Content="..." Command="{Binding SelectSortingFilePathCommand}" Width="30" Height="20" Margin="5,0,0,0"  Visibility="Collapsed"  />
             <Button Content="Update Pfade mit Jahreszahlen" Command="{Binding UpdateYearOfPathCommand}" />
+            <Button Content="Neuer Button" Margin="10" />
         </StackPanel>
 
         <!-->Unten: Laden, Speichern, Sortiervorgang starten-->

@@ -29,6 +29,9 @@ namespace Dateien_Sortierprogramm
             InitializeComponent();
         }
 
-       
+        private void btn_AddOrderElementsToGrid_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

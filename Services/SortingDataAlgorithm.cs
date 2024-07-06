@@ -209,6 +209,11 @@ namespace Dateien_Sortierprogramm.Services
             if (_countSortedFiles < allFilesFoundToSort.Count())
             {
                 loggingInformation += "Mehrere Dateien aus den angegebenen Quellordnern sind noch nicht einsortiert worden, da es noch keinen passenden Suchbegriff gibt";
+                loggingInformation += "\nDerzeitige Suchbegriffe mit Zuordnung:";
+               foreach(var orderElement in sortingInformation.LstOrderElements)
+                {
+                   loggingInformation += "\n-"+orderElement.SearchTerm.ToString();
+                }
             }
             return (_successfullSortedItemsLog, loggingInformation);
         }
