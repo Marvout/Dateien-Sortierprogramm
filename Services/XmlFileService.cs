@@ -18,7 +18,7 @@ namespace Dateien_Sortierprogramm.Services
 {
     public class XmlFileService
     {
-        public static void CreateXmlFile(MainWindowViewModel vm)
+        public static void CreateXmlFile(SortingInformation sortingInformationData)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.DefaultExt = ".xml";
@@ -29,7 +29,7 @@ namespace Dateien_Sortierprogramm.Services
             if (resultOfDialog == true)
             {
                 //Prüfung ob ViewModel null ist
-                if (vm == null)
+                if (sortingInformationData == null)
                 {
                     MessageBox.Show("ViewModel enthält keine Daten. Null Exception");
                     return;
@@ -37,24 +37,47 @@ namespace Dateien_Sortierprogramm.Services
                 string fileName = saveFileDialog.FileName;
 
 
-
-                XmlSerializer ser = new XmlSerializer(typeof(MainWindowViewModel));
+                XmlSerializer ser = new XmlSerializer(typeof(SortingInformation));
                 if (File.Exists(fileName)) //Prüfen, ob Datei existiert. Dazu muss der Speicherort geprüft werden
                 {
                     File.Delete(fileName);
                 }
                 using (Stream s = File.OpenWrite(fileName))
                 {
-                    ser.Serialize(s, vm);
+                    ser.Serialize(s, sortingInformationData);
                 }
             }
         }
 
-        public static MainWindowViewModel LoadXmlFile(MainWindowViewModel vm)
+        public static string CreateXmlFile(SortingInformation sortingInformation, string saveFilePath)
+        {
+            string loggingInformation = "";
+            XmlSerializer ser = new XmlSerializer(typeof(SortingInformation));
+            try
+            {
+                if (File.Exists(saveFilePath)) //Prüfen, ob Datei existiert. Dazu muss der Speicherort geprüft werden
+                {
+                    File.Delete(saveFilePath);
+                }
+                using (Stream s = File.OpenWrite(saveFilePath))
+                {
+                    ser.Serialize(s, sortingInformation);
+                }
+                loggingInformation = "XML Datei erfolgreich geupdated";
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }
+            return loggingInformation;
+        }
+
+        public static SortingInformation LoadXmlFile()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "XML-Dateien (*.xml)|*.xml|Alle Dateien (*.*)|*.*"; // Filter
             bool? isDialogResult = openFileDialog.ShowDialog();
+            SortingInformation sortingInformationData = new SortingInformation();
 
             //Objekt wird erzeugt in dem die Daten von xml geladen werden
             //vm = new MainWindowViewModel();
@@ -66,14 +89,14 @@ namespace Dateien_Sortierprogramm.Services
                 //Laden der Inhalte der Datei in Objekt
                 try
                 {
-                    XmlSerializer ser = new XmlSerializer(typeof(MainWindowViewModel));
+                    XmlSerializer ser = new XmlSerializer(typeof(SortingInformation));
                     using (Stream s = File.OpenRead(fileName))
                     {
                         if (s == null)
                         {
                             MessageBox.Show("Datei konnte nicht geladen werden.");
                         }
-                        vm = ser.Deserialize(s) as MainWindowViewModel;
+                        sortingInformationData = ser.Deserialize(s) as SortingInformation;
                     }
                 }
                 catch (Exception e)
@@ -81,7 +104,31 @@ namespace Dateien_Sortierprogramm.Services
                     MessageBox.Show(e.ToString());
                 }
             }
-            return vm;
+            return sortingInformationData;
         }
+        public static (SortingInformation, string loggingInformation) LoadXmlFileForService(string fileName)
+        {
+            SortingInformation sortingInformationData = new SortingInformation();
+            string loggingInformation = "";
+
+
+            //Laden der Inhalte der Datei in Objekt
+            try
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(SortingInformation));
+                using (Stream s = File.OpenRead(fileName))
+                {
+                    sortingInformationData = ser.Deserialize(s) as SortingInformation;
+                }
+                loggingInformation = "Datei erfolgreich geladen";
+            }
+            catch (Exception e)
+            {
+                loggingInformation += "\n" + e.Message;
+            }
+
+            return (sortingInformationData, loggingInformation);
+        }
+
     }
 }

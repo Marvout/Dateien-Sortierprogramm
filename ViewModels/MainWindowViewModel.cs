@@ -13,20 +13,34 @@ using System.Xml.Serialization;
 using System.Windows.Controls;
 using System.Runtime.CompilerServices;
 using Dateien_Sortierprogramm.UIs;
+using System.Printing;
 
 namespace Dateien_Sortierprogramm.ViewModels
 {
-    [Serializable]
+
     public partial class MainWindowViewModel : NotifyableBaseObject
     {
         //TODO: Reihenfolge Anpassbar für OrderElements DataGrid, da sich dadurch vlt die Sortierreihenfolge ergibt?
 
         //Zu speichernde Daten
+        //private string _sortingFilePath = "";
+        //public string SortingFilePath
+        //{
+        //    get => _sortingFilePath;
+        //    set
+        //    {
+        //        if (_sortingFilePath != value)
+        //        {
+        //            _sortingFilePath = value;
+        //            RaisePropertyChanged();
+        //        }
+        //    }
+        //}
         public ObservableCollection<Folder> lstSourceFolders { get; set; } = new ObservableCollection<Folder>();
         public ObservableCollection<OrderElements> lstOrderElements { get; set; } = new ObservableCollection<OrderElements>();
 
         // private ObservableCollection<LogInfos> _lstLogInfos = new ObservableCollection<LogInfos>();
-        public ObservableCollection<LogInfos> LstLogInfos { get; set; } = new ObservableCollection<LogInfos>();
+        public ObservableCollection<SortingLogInfos> LstLogInfos { get; set; } = new ObservableCollection<SortingLogInfos>();
         //{
         //    get => _lstLogInfos;
         //    set
@@ -40,24 +54,20 @@ namespace Dateien_Sortierprogramm.ViewModels
         //}
         //Daten die nicht gespeichert werden können/müssen
         #region Commands
-        [XmlIgnore]
         public ICommand SelectSourceFolderCommand { get; set; }
-        [XmlIgnore]
         public ICommand SelectTargetFolderCommand { get; set; }
-        [XmlIgnore]
+
+        public ICommand SelectSortingFilePathCommand { get; set; }
+
         public ICommand CreateOrderElementCommand { get; set; }
-        [XmlIgnore]
         public ICommand SaveDataCommand { get; set; }
-        [XmlIgnore]
         public ICommand LoadDataCommand { get; set; }
-        [XmlIgnore]
         public ICommand StartSortingServiceCommand { get; set; }
-        [XmlIgnore]
         public ICommand CloseLogWindowCommand { get; set; }
-        [XmlIgnore]
         public ICommand DeleteDataGridRowFolderCommand { get; set; }
-        [XmlIgnore]
         public ICommand DeleteDataGridRowOrderElementsCommand { get; set; }
+
+        public ICommand UpdateYearOfPathCommand { get; set; }
         #endregion
 
         //[XmlIgnore]
@@ -68,61 +78,16 @@ namespace Dateien_Sortierprogramm.ViewModels
         //Konstruktor
         public MainWindowViewModel()
         {
-            //DummyServices
-            bool isDummyServices = false;
-            if (isDummyServices)
-            {
-                DummyFolderPathService serviceFolderPaths = new DummyFolderPathService();
-                foreach (var folderpath in serviceFolderPaths.SomeFolderStrings())
-                {
-                    lstSourceFolders.Add(folderpath);
-                }
-                DummyOrderElementsService serviceOrderElements = new DummyOrderElementsService();
-                foreach (var orderelement in serviceOrderElements.SomeOrderElementsStrings())
-                {
-                    lstOrderElements.Add(orderelement);
-                }
-                DummyLogInfoService serviceLogInfos = new DummyLogInfoService();
-                foreach (var logInfo in serviceLogInfos.SomeLogInfos())
-                {
-                    LstLogInfos.Add(logInfo);
-                }
-            }
-
             //Delegate Initialisierung
-            this.SelectSourceFolderCommand = new DelegateCommand((o) =>
-            {
-                SelectSourceFolder();
-
-            });
-            this.SelectTargetFolderCommand = new DelegateCommand((o) =>
-            {
-                SelectTargetFolder();
-            });
-            this.CreateOrderElementCommand = new DelegateCommand((o) =>
-            {
-                AddingOrderElementsToGrid();
-            });
-            this.SaveDataCommand = new DelegateCommand((o) =>
-            {
-                SaveData();
-            });
-            this.LoadDataCommand = new DelegateCommand((o) =>
-            {
-                LoadData();
-            });
-            this.StartSortingServiceCommand = new DelegateCommand((o) =>
-            {
-                StartSorting();
-            });
-            this.DeleteDataGridRowFolderCommand = new DelegateCommand((o) =>
-            {
-                DeleteDataGridRowFolder();
-            });
-            this.DeleteDataGridRowOrderElementsCommand = new DelegateCommand((o) =>
-            {
-                DeleteDataGridRowOrderElements();
-            });
+            this.SelectSourceFolderCommand = new DelegateCommand((o) => SelectSourceFolder());
+            this.SelectTargetFolderCommand = new DelegateCommand((o) => SelectTargetFolder());
+            this.CreateOrderElementCommand = new DelegateCommand((o) => AddingOrderElementsToGrid());
+            this.SaveDataCommand = new DelegateCommand((o) => SaveData());
+            this.LoadDataCommand = new DelegateCommand((o) => LoadData());
+            this.StartSortingServiceCommand = new DelegateCommand((o) => StartSorting());
+            this.DeleteDataGridRowFolderCommand = new DelegateCommand((o) => DeleteDataGridRowFolder());
+            this.DeleteDataGridRowOrderElementsCommand = new DelegateCommand((o) => DeleteDataGridRowOrderElements());
+            this.UpdateYearOfPathCommand = new DelegateCommand((o) => UpdateYearOfPath());
         }
 
 
@@ -196,11 +161,27 @@ namespace Dateien_Sortierprogramm.ViewModels
                 string selectedPath = dialog.FileName;
                 if (!string.IsNullOrEmpty(selectedPath))
                 {
-                    lstSourceFolders.Add(new Folder() { FolderPath = selectedPath + "\\" });
+                    lstSourceFolders.Add(new Folder() { FolderPath = selectedPath + @"\" });
                 }
 
             }
         }
+
+        //private void SelectSortingFilePath()
+        //{
+        //    var dialog = new CommonOpenFileDialog();
+        //    dialog.IsFolderPicker = true;
+        //    CommonFileDialogResult result = dialog.ShowDialog();
+        //    if (result == CommonFileDialogResult.Ok)
+        //    {
+        //        string selectedPath = dialog.FileName;
+        //        if (!string.IsNullOrEmpty(selectedPath))
+        //        {
+        //            SortingFilePath = selectedPath + @"\";
+        //        }
+
+        //    }
+        //}
 
         private void SelectTargetFolder()
         {
@@ -232,16 +213,44 @@ namespace Dateien_Sortierprogramm.ViewModels
             TargetFolderUI = string.Empty;
         }
 
-
         private void SaveData()
         {
-            XmlFileService.CreateXmlFile(this);
+            SortingInformation sortingInformationData = new SortingInformation();
+            //Listen
+            sortingInformationData.LstSourceFolders = this.lstSourceFolders;
+            sortingInformationData.LstFileFormats = this.lstFileFormats;
+            sortingInformationData.LstOrderElements = this.lstOrderElements;
+            //Checkboxen
+            sortingInformationData.CheckBox_All = this.checkBox_All;
+            sortingInformationData.CheckBox_PDF = this.checkBox_PDF;
+            sortingInformationData.CheckBox_Excel = this.checkBox_Excel;
+            sortingInformationData.CheckBox_Word = this.checkBox_Word;
+            sortingInformationData.CheckBox_Powerpoint = this.checkBox_Powerpoint;
+            sortingInformationData.CheckBox_Text = this.checkBox_Text;
+            sortingInformationData.CheckBox_CSV = this.checkBox_CSV;
+            sortingInformationData.CheckBox_ZIP = this.checkBox_ZIP;
+            sortingInformationData.CheckBox_JPG = this.checkBox_JPG;
+            sortingInformationData.CheckBox_PNG = this.checkBox_PNG;
+            sortingInformationData.CheckBox_GIF = this.checkBox_GIF;
+            sortingInformationData.CheckBox_BMP = this.checkBox_BMP;
+            sortingInformationData.CheckBox_MP3 = this.checkBox_MP3;
+            sortingInformationData.CheckBox_MP4 = this.checkBox_MP4;
+            sortingInformationData.CheckBox_WAV = this.checkBox_WAV;
+            sortingInformationData.CheckBox_AVI = this.checkBox_AVI;
+            sortingInformationData.CheckBox_MOV = this.checkBox_MOV;
+            sortingInformationData.CheckBox_MKV = this.checkBox_MKV;
+            sortingInformationData.CheckBox_WMV = this.checkBox_WMV;
+            sortingInformationData.CheckBox_RAR = this.checkBox_RAR;
+            sortingInformationData.CheckBox_XML = this.checkBox_XML;
+            sortingInformationData.CheckBox_JSON = this.checkBox_JSON;
+
+            XmlFileService.CreateXmlFile(sortingInformationData);
         }
 
         private void LoadData()
         {
-            MainWindowViewModel vm = XmlFileService.LoadXmlFile(this);
-            if (vm == null)
+            SortingInformation sortingInformationData = XmlFileService.LoadXmlFile();
+            if (sortingInformationData == null)
             {
                 MessageBox.Show("Datei enthält keine Daten oder falsche Datei wurde ausgewählt.");
                 return;
@@ -249,39 +258,41 @@ namespace Dateien_Sortierprogramm.ViewModels
             //Elemente in ViewModel laden. Dazu muss, wenn noch Elemente in den ObservableCollections, die Objekte leer sein
             //Dann wird über eine foreach-Schleife das Objekt wieder befüllt.
             this.lstOrderElements.Clear(); //Vorherige Elemente entfernen
-            foreach (var orderelement in vm.lstOrderElements)
+            foreach (var orderelement in sortingInformationData.LstOrderElements)
             {
                 this.lstOrderElements.Add(orderelement);
             }
             this.lstSourceFolders.Clear();
-            foreach (var orderelements in vm.lstSourceFolders)
+            foreach (var orderelements in sortingInformationData.LstSourceFolders)
             {
                 this.lstSourceFolders.Add(orderelements);
             }
+            //this.SortingFilePath = string.Empty;
+            //this.SortingFilePath = vm.SortingFilePath ?? string.Empty;
 
             //Checkboxen Status laden
             #region Checkboxen Laden
-            CheckBox_AVI = vm.CheckBox_AVI;
-            CheckBox_BMP = vm.CheckBox_BMP;
-            CheckBox_CSV = vm.CheckBox_CSV;
-            CheckBox_Excel = vm.CheckBox_Excel;
-            CheckBox_GIF = vm.CheckBox_GIF;
-            CheckBox_JSON = vm.CheckBox_JSON;
-            CheckBox_JPG = vm.CheckBox_JPG;
-            CheckBox_MKV = vm.CheckBox_MKV;
-            CheckBox_MOV = vm.CheckBox_MOV;
-            CheckBox_MP3 = vm.CheckBox_MP3;
-            CheckBox_MP4 = vm.CheckBox_MP4;
-            CheckBox_PDF = vm.CheckBox_PDF;
-            CheckBox_PNG = vm.CheckBox_PNG;
-            CheckBox_Powerpoint = vm.CheckBox_Powerpoint;
-            CheckBox_RAR = vm.CheckBox_RAR;
-            CheckBox_Text = vm.CheckBox_Text;
-            CheckBox_WAV = vm.CheckBox_WAV;
-            CheckBox_WMV = vm.CheckBox_WMV;
-            CheckBox_Word = vm.CheckBox_Word;
-            CheckBox_XML = vm.CheckBox_XML;
-            CheckBox_ZIP = vm.CheckBox_ZIP;
+            this.CheckBox_AVI = sortingInformationData.CheckBox_AVI;
+            this.CheckBox_BMP = sortingInformationData.CheckBox_BMP;
+            this.CheckBox_CSV = sortingInformationData.CheckBox_CSV;
+            this.CheckBox_Excel = sortingInformationData.CheckBox_Excel;
+            this.CheckBox_GIF = sortingInformationData.CheckBox_GIF;
+            this.CheckBox_JSON = sortingInformationData.CheckBox_JSON;
+            this.CheckBox_JPG = sortingInformationData.CheckBox_JPG;
+            this.CheckBox_MKV = sortingInformationData.CheckBox_MKV;
+            this.CheckBox_MOV = sortingInformationData.CheckBox_MOV;
+            this.CheckBox_MP3 = sortingInformationData.CheckBox_MP3;
+            this.CheckBox_MP4 = sortingInformationData.CheckBox_MP4;
+            this.CheckBox_PDF = sortingInformationData.CheckBox_PDF;
+            this.CheckBox_PNG = sortingInformationData.CheckBox_PNG;
+            this.CheckBox_Powerpoint = sortingInformationData.CheckBox_Powerpoint;
+            this.CheckBox_RAR = sortingInformationData.CheckBox_RAR;
+            this.CheckBox_Text = sortingInformationData.CheckBox_Text;
+            this.CheckBox_WAV = sortingInformationData.CheckBox_WAV;
+            this.CheckBox_WMV = sortingInformationData.CheckBox_WMV;
+            this.CheckBox_Word = sortingInformationData.CheckBox_Word;
+            this.CheckBox_XML = sortingInformationData.CheckBox_XML;
+            this.CheckBox_ZIP = sortingInformationData.CheckBox_ZIP;
             #endregion
             //TODO: Auf Jahreszahlen prüfen
             //Prüfen ob Zielordnerpfade mit Jahresangabe für neues Jahr geupdated sollen, grade beim Steuerordner
@@ -290,14 +301,10 @@ namespace Dateien_Sortierprogramm.ViewModels
 
         private void StartSorting()
         {
-            //DummyLogInfoService serviceLogInfos = new DummyLogInfoService();
-            //foreach (var logInfo in serviceLogInfos.SomeLogInfos())
-            //{
-            //    lstLogInfo.Add(logInfo);
-            //}
-            SortingDataAlgorithm sortingDataAlgorithm = new SortingDataAlgorithm();
-            IEnumerable<LogInfos> logInfos = sortingDataAlgorithm.StartSortingcService(this, lstFileFormats);
-            if (logInfos != null)
+            List<SortingLogInfos> logInfos = new List<SortingLogInfos>();
+            LstLogInfos.Clear();
+            logInfos = SortingDataAlgorithm.StartSortingcService(this, lstFileFormats);
+            if (logInfos != null && logInfos.Count() != 0)
             {
                 foreach (var logInfo in logInfos)
                 {
@@ -305,7 +312,6 @@ namespace Dateien_Sortierprogramm.ViewModels
                 }
                 LogView logView = new LogView(this);
                 logView.Show();
-                MessageBox.Show("Dateien wurden erfolgreich einsortiert. Im Protkollfenster, wird angezeigt, welche Datei von wo nach wo verschoben wurde.");
             }
         }
 
@@ -323,6 +329,11 @@ namespace Dateien_Sortierprogramm.ViewModels
             {
                 lstOrderElements.Remove(SelectedItemOrderElements);
             }
+        }
+
+        private void UpdateYearOfPath()
+        {
+            SortingDataAlgorithm.ChangeDirectoryToCurrentYear(this);
         }
     }
 }

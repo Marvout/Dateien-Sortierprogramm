@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dateien_Sortierprogramm.Data
 {
-    public class LogInfos
+    public class SortingLogInfos
     {
         public string File { get; set; } = string.Empty;
         public string FromFolder { get; set; } = string.Empty;
